@@ -11,8 +11,10 @@ import os
 from uuid import UUID
 from alembic import op
 import sqlalchemy as sa
-from werkzeug.security import generate_password_hash
+from passlib.context import CryptContext
 from dotenv import load_dotenv
+
+bcrypt_context = CryptContext(schemes=["bcrypt"])
 
 load_dotenv()
 
@@ -27,7 +29,7 @@ def upgrade() -> None:
     usr_tbl = op.create_table("users",
                     sa.Column('id', sa.UUID, nullable=False, primary_key=True),
                     sa.Column('email', sa.String, unique=True, nullable=False),
-                    sa.Column('password', sa.String),
+                    sa.Column('hashed_password', sa.String),
                     sa.Column('first_name', sa.String, nullable=False),
                     sa.Column('last_name', sa.String, nullable=False),
                     sa.Column('date_of_birth', sa.DateTime),
@@ -48,9 +50,10 @@ def upgrade() -> None:
             "first_name":"Anh",
             "last_name":"Nguyen",
             "is_admin": True,
-            "password": generate_password_hash(os.environ['DEFAULT_ADMIN_PASSWORD'])
+            "hashed_password": bcrypt_context.hash(os.environ['DEFAULT_ADMIN_PASSWORD'])
         }
     ]
+    
     op.bulk_insert(usr_tbl, usr_admin_data)
     
     usr_data = [
