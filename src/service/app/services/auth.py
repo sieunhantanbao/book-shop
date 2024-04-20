@@ -12,7 +12,7 @@ from settings import JWT_SECRET, JWT_ALGORITHM
 oa2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 def authenticate(email: str, password: str, db: Session):
-    user = db.query(User).filter(User.email == email).first()
+    user = db.query(User).filter(User.email == email, User.is_active == True).first()
 
     if not user:
         return False
