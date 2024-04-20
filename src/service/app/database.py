@@ -1,7 +1,9 @@
-from settings import SQLALCHEMY_DATABASE_URL
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import redis
+import os
+from settings import SQLALCHEMY_DATABASE_URL
 
 def get_db_context():
     try:
@@ -16,3 +18,5 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 LocalSession = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 
 Base = declarative_base()
+
+redis_client = redis.Redis(host=os.environ['REDIS_HOST'], port=os.environ['REDIS_PORT'], db=0)
