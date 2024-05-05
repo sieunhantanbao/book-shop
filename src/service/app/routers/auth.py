@@ -1,6 +1,6 @@
 
 from datetime import timedelta
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from database import get_db_context
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 async def get_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db_context)):
     user = auth_service.authenticate(form_data.username, form_data.password, db)
     if not user:
-        raise auth_service.token_exception()
+        raise auth_service.token_exception(status.HTTP_401_UNAUTHORIZED)
     access_token, expire = auth_service.create_access_token(user, timedelta(minutes=10))
     return {
             "access_token":  access_token,
