@@ -1,14 +1,27 @@
+from typing import List
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
 from uuid import UUID
 from ultils.extensions import allowed_file, upload_file
 from schemas.user import User, get_hashed_password, verify_password
-from models.user import ChangeUserPasswordModel, UpdateMyProfileModel, UserCreateOrUpdateModel, UserProfileViewModel
+from models.user import AdminUserViewModel, ChangeUserPasswordModel, UpdateMyProfileModel, UserCreateOrUpdateModel, UserProfileViewModel
 from datetime import datetime
 from fastapi import UploadFile, status
 import logging
 
-def get_user_by_id(id:UUID, db:Session) -> UserProfileViewModel:
+def get_all(db: Session) -> List[AdminUserViewModel]:
+    """ Get all users
+
+    Args:
+        db (Session): Db context
+
+    Returns:
+        List[User]: List of users
+    """
+    users = db.query(User).all()
+    return users
+
+
+def get_user_by_id(id: UUID, db:Session) -> UserProfileViewModel:
     """ Get a user by Id
     
     Args:
@@ -152,25 +165,3 @@ def upload_profile_photo(db: Session, user_id: UUID, uploaded_file: UploadFile) 
             return status.HTTP_404_NOT_FOUND
         return status.HTTP_400_BAD_REQUEST
     return status.HTTP_400_BAD_REQUEST
-    
-
-
-# def delete_a_user(id: UUID, db: Session) -> status:
-#     """ Soft delete a user by set the is_active = False
-
-#     Args:
-#         id (UUID): Id of the user to delete
-#         db (Session): Db context
-
-#     Returns:
-#         status: 404 Not found/ 204 No content
-#     """
-#     user_to_delete = db.query(User).filter(User.id==id).first()
-#     if not user_to_delete:
-#         logging.error("The user does not exist to delete")
-#         return status.HTTP_404_NOT_FOUND
-#     user_to_delete.is_active = False
-#     db.add(user_to_delete)
-#     db.commit()
-#     return status.HTTP_204_NO_CONTENT
-        

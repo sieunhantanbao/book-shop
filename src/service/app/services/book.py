@@ -95,7 +95,7 @@ def get_books_by_cat(
         return query.limit(size).all()
     return query.all()
 
-def get_all_categories(db: Session, size: int = 0) -> List[CategoryView2Model]:
+def get_all_categories(db: Session, size: int = 0) -> list[CategoryView2Model]:
     """ Get all categoryies
 
     Args:
@@ -103,12 +103,12 @@ def get_all_categories(db: Session, size: int = 0) -> List[CategoryView2Model]:
         size (int, optional): Number of first categories to get. Defaults to 0.
 
     Returns:
-        List[CategoryView2Model]: List of categories
+        list[CategoryView2Model]: List of categories
     """
     if size and size > 0:
-        return List[CategoryView2Model](db.query(Category).limit(size).all())
+        return list[CategoryView2Model](db.query(Category).limit(size).all())
     else:
-        return List[CategoryView2Model](db.query(Category).all())
+        return list[CategoryView2Model](db.query(Category).all())
     
     
 def get_category_by_id(db: Session, id_or_slug) -> CategoryViewModel:

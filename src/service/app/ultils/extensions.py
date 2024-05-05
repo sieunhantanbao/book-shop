@@ -1,7 +1,9 @@
 from fastapi import UploadFile
 import os
+from functools import wraps
 from werkzeug.utils import secure_filename
 import uuid
+from database import redis_client
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,6 +24,13 @@ def remove_file(file_name: str):
     if os.path.isfile(file_path):
         os.remove(file_path)
 
+def clear_redis_cache(cache_keys: list):
+    try:
+        for key in cache_keys:
+            if redis_client.exists(key):
+                redis_client.delete(key)
+    except Exception as e:
+        print(e)
 
 def is_valid_uuid(value):
     try:
@@ -29,4 +38,5 @@ def is_valid_uuid(value):
         return True
     except ValueError:
         return False
+
         

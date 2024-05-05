@@ -87,3 +87,15 @@ class UpdateMyProfileModel(BaseModel):
     class Config:
         # Pydantic V2 config to raise all validation errors at once
         validate_default = True
+        
+class AdminUserViewModel(BaseModel):
+    email: str
+    first_name: str
+    last_name: str
+    telephone: Optional[str] = None
+    address: Optional[str] = None
+    experience_in: Optional[str] = None
+    addition_detail: Optional[str] = None
+    date_of_birth: Optional[datetime] = None
+    class Config:
+        orm_mode: True

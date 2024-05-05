@@ -42,7 +42,7 @@ class BookDetailViewModel(BaseModel, BaseBookViewModel):
     book_comments: Optional[List[BookRatingViewModel]] = None
     books_in_cat: Optional[List[BookRelatedViewModel]] = None
     related_books: Optional[List[BookRelatedViewModel]] = None
-    wishlists: Optional[List[UUID]] = None
+    user_wishlists: Optional[List[UUID]] = None
     rating_statistic: Optional[dict[str, float]] = None
     
     class Config:

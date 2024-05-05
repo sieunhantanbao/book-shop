@@ -7,7 +7,7 @@ from models.rating import BookReviewCreateModel
 from models.category import CategoryDetailViewModel, CategoryView2Model, CategoryViewModel
 from ultils import constants
 from ultils.utils import http_exception
-from services.auth import token_interceptor
+from services.auth import optional_token_interceptor, token_interceptor
 from database import get_db_context, redis_client
 from schemas.user import User
 from services import book as book_service, rating as rating_service, wishlist as wishlist_service
@@ -20,7 +20,7 @@ async def get_book_wishlist(db: Session = Depends(get_db_context),
                          user: User = Depends(token_interceptor)) -> List[BookRelatedViewModel]:
     """ Get list of book wishlist
 
-    Args:
+    Args: 
         db (Session, optional): Db context. Defaults to Depends(get_db_context).
         user (User, optional): User from JWT Token. Defaults to Depends(token_interceptor).
 
@@ -103,7 +103,8 @@ async def book_list(min_price_input: float,
                     sort_by: Optional[str] = None,
                     keyword: Optional[str] = None,
                     category: Annotated[list[UUID] | None, Query()] = None,
-                    db: Session = Depends(get_db_context))-> List[BookDetailViewModel]:
+                    db: Session = Depends(get_db_context),
+                    user: Optional[User] = Depends(optional_token_interceptor))-> List[BookDetailViewModel]:
     """ Get all books with filtering
 
     Args:
@@ -136,37 +137,29 @@ async def book_list(min_price_input: float,
     if sort_by:
         books.sort(key=lambda x: x.average_rating_value, reverse=True)
 
-    # if current_user!= None and current_user.is_authenticated:
-    #     wishlists = _wishlist_service.get_all(db, current_user.id)
-    #     if wishlists:
-    #         wishlists = [wishlist.book_id for wishlist in wishlists]
-    #     return render_template('client/book.html',
-    #                         categories = categories,
-    #                         books = books,
-    #                         wishlists = wishlists,
-    #                         user = current_user)
-    # else:
-    #     return render_template('client/book.html',
-    #                         categories = categories,
-    #                         books = books,
-    #                         user = None)
+    wishlists = None
+    if user:
+        wishlists = wishlist_service.get_all(db, user.id)
+        if wishlists:
+            wishlists = [wishlist.book_id for wishlist in wishlists]
+            
     for book in books:
         _, data = __get_star_rating_statistic(db, book.id)
         book.rating_statistic = data
         book.thumbnail_url = book.images[0].url if book.images[0] is not None else None
-    
+        book.in_wishlist = True if wishlists is not None and (book.id in wishlists) else False
     return books
     
 @router.get("/{id_or_slug}", status_code=status.HTTP_200_OK)
 async def get_book_by_id(id_or_slug,
                          db: Session = Depends(get_db_context),
-                         user: User = Depends(token_interceptor)) -> BookDetailViewModel:
+                         user: Optional[User] = Depends(optional_token_interceptor)) -> BookDetailViewModel:
     """ Get a book detail
 
     Args:
         id_or_slug (_type_): Id or slug of the book
         db (Session, optional): Db context. Defaults to Depends(get_db_context).
-        user (User, optional): User from token. Defaults to Depends(token_interceptor).
+        user (User, optional): User from token. Defaults to Depends(optional_token_interceptor).
 
     Returns:
         BookDetailViewModel: Book detail view model
@@ -214,18 +207,19 @@ async def get_book_by_id(id_or_slug,
         wishlists = wishlist_service.get_all(db, user.id)
         if wishlists:
             wishlists = [wishlist.book_id for wishlist in wishlists]
+            book.user_wishlists = wishlists
     return book
 
 @router.get('/categories/{id_or_slug}', status_code=status.HTTP_200_OK, response_model=None)
 async def get_category_by_id(id_or_slug,
                               db: Session = Depends(get_db_context),
-                              user: User = Depends(token_interceptor))-> CategoryDetailViewModel:
+                              user: Optional[User] = Depends(optional_token_interceptor))-> CategoryDetailViewModel:
     """ Get a category detail
 
     Args:
         id_or_slug (_type_): Id or slug of the category
         db (Session, optional): Db context. Defaults to Depends(get_db_context).
-        user (User, optional): User from the JWT token. Defaults to Depends(token_interceptor).
+        user (User, optional): User from the JWT token. Defaults to Depends(optional_token_interceptor).
 
     Raises:
         http_exception: 404 Not found

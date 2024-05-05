@@ -52,18 +52,6 @@ def create(db: Session, user_id: UUID, book_id: UUID) -> bool:
         return True
     except:
         return False
-    
-
-# def delete(db: Session, wishlist_id: UUID):
-#     """ Remove a wishlist
-
-#     Args:
-#         db (Session): _description_
-#         wishlist_id (UUID): Wishlist id to remove
-#     """
-#     delete = db.delete(WishList).where(id = wishlist_id)
-#     delete.execute()
-#     db.commit()
 
 def delete_by_user_and_book(db: Session, user_id:UUID, book_id:UUID) -> bool:
     """ Delete a book from the wishlist
