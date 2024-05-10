@@ -40,4 +40,9 @@ class CategoryView2Model(BaseModel):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
     class Config:
         orm_mode: True
-    
+
+class CategoryForDdlViewModel(BaseModel):
+    id: UUID
+    name: str
+    class Config:
+        orm_mode: True

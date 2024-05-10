@@ -66,7 +66,7 @@ class BookFeaturedViewModel(BaseModel):
 
 class BookFilterInputModel(BaseModel):
     keyword: Optional[str] = None
-    category: Optional[List[UUID]] = None
+    category_ids: Optional[List[UUID]] = None
     min_price_input: float
     max_price_input: float
     min_rate_input: int
