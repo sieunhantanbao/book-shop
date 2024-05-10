@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
 from models.rating import BookReviewCreateModel
-from models.category import CategoryDetailViewModel, CategoryView2Model, CategoryViewModel
+from models.category import CategoryDetailViewModel, CategoryForDdlViewModel, CategoryView2Model, CategoryViewModel
 from ultils import constants
 from ultils.utils import http_exception
 from services.auth import optional_token_interceptor, token_interceptor
@@ -73,6 +73,18 @@ async def get_categories(get_all: bool = True,
             serialized_categories_cached = serialized_categories_list
     return json.loads(serialized_categories_cached)
 
+@router.get('/categories-for-ddl', status_code=status.HTTP_200_OK)
+async def get_categories_for_ddl(
+                                db: Session = Depends(get_db_context))-> List[CategoryForDdlViewModel]:
+    """ Get all categories for dropdownlist
+
+    Args:
+        db (Session, optional): Db context. Defaults to Depends(get_db_context).
+
+    Returns:
+        List[CategoryForDdlViewModel]: List of categories for drop down list
+    """
+    return book_service.get_all_categories_for_ddl(db)
 
 @router.get('/featured-books', status_code=status.HTTP_200_OK)
 async def get_featured_books(db: Session = Depends(get_db_context))-> List[BookFeaturedViewModel]:
@@ -102,7 +114,7 @@ async def book_list(min_price_input: float,
                     max_rate_input: int,
                     sort_by: Optional[str] = None,
                     keyword: Optional[str] = None,
-                    category: Annotated[list[UUID] | None, Query()] = None,
+                    category: Optional[str] = None,
                     db: Session = Depends(get_db_context),
                     user: Optional[User] = Depends(optional_token_interceptor))-> List[BookDetailViewModel]:
     """ Get all books with filtering
@@ -114,18 +126,27 @@ async def book_list(min_price_input: float,
         max_rate_input (int): Max rate input (0-5)
         sort_by (Optional[str], optional): Sort by. Defaults to None.
         keyword (Optional[str], optional): Keyword search. Defaults to None.
-        category (Annotated[list[UUID]  |  None, Query, optional): List of categoryId. Defaults to None.
+        category Optional[str] = None: List of categoryId. Defaults to None.
         db (Session, optional): Db context. Defaults to Depends(get_db_context).
 
     Returns:
         List[BookDetailViewModel]: List of book detail view model
     """
+    try:
+        # Attempt to split the string by commas and convert each to UUID
+        if category is not None and category != '':
+            category_ids = [UUID(x) for x in category.split(",")]
+        else:
+            category_ids = None
+    except ValueError as exc:
+        raise ValueError(exc) from exc
+
     filter_model = BookFilterInputModel(keyword = keyword,
                                         min_price_input = min_price_input,
                                         max_price_input = max_price_input,
                                         min_rate_input = min_rate_input,
                                         max_rate_input = max_rate_input,
-                                        category = category,
+                                        category_ids = category_ids,
                                         sort_by = sort_by)
     books = book_service.get_all(db, filter_model)
     __build_book_ratings(db, books)

@@ -2,7 +2,7 @@ from uuid import UUID
 from sqlalchemy import asc, desc, or_
 from typing import List
 from sqlalchemy.orm import Session
-from models.category import CategoryView2Model, CategoryViewModel
+from models.category import CategoryForDdlViewModel, CategoryView2Model, CategoryViewModel
 from models.book import BookDetailViewModel, BookFeaturedViewModel, BookFilterInputModel, BookRelatedViewModel
 from schemas.book_relation import BookRelation
 from ultils.extensions import is_valid_uuid
@@ -43,8 +43,8 @@ def get_all(db: Session, filter_model: BookFilterInputModel) -> list[BookDetailV
     # Filter by Keyword
     if filter_model.keyword is not None and filter_model.keyword != '':
         query = query.filter(Book.title.ilike(f"%{filter_model.keyword}%"))
-    if filter_model.category is not None and len(filter_model.category) > 0:
-        query = query.filter(or_(Book.category_id.in_(filter_model.category)))
+    if filter_model.category_ids is not None and len(filter_model.category_ids) > 0:
+        query = query.filter(or_(Book.category_id.in_(filter_model.category_ids)))
     # Order by    
     order_by = desc(Book.created_at)
     match filter_model.sort_by:
@@ -109,7 +109,17 @@ def get_all_categories(db: Session, size: int = 0) -> list[CategoryView2Model]:
         return list[CategoryView2Model](db.query(Category).limit(size).all())
     else:
         return list[CategoryView2Model](db.query(Category).all())
-    
+
+def get_all_categories_for_ddl(db: Session) -> List[CategoryForDdlViewModel]:
+    """ Get all categories for ddl
+
+    Args:
+        db (Session): Db context
+
+    Returns:
+        List[CategoryForDdlViewModel]: List of category for Drop down list
+    """
+    return db.query(Category).order_by(Category.name).all()
     
 def get_category_by_id(db: Session, id_or_slug) -> CategoryViewModel:
     """ Get category by Id
