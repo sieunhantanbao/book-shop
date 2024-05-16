@@ -14,7 +14,7 @@ function BookList({title}) {
     const imageBaseUrl = `${import.meta.env.VITE_API_URL}/static/files_uploaded`;
 
     useEffect(() => {
-        
+
         dispatch(fetchSearchBooks(inputs));
 
     }, [dispatch]);
@@ -42,7 +42,9 @@ function BookList({title}) {
                     </div>
                     <div className="row">
                         { books.map(book => (
-                            <BookItem key={book.id} book={book} imageBaseUrl={imageBaseUrl}></BookItem>
+                            <>
+                                <BookItem key={book.id} book={book} imageBaseUrl={imageBaseUrl} />
+                            </>
                         ))}
                     </div>
                 </div> 

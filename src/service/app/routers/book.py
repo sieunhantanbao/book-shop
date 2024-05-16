@@ -259,6 +259,8 @@ async def get_category_by_id(id_or_slug,
         wishlists = wishlist_service.get_all(db, user.id)
         if wishlists:
             wishlists = [wishlist.book_id for wishlist in wishlists]
+            for book in books:
+                book.in_wishlist = True if wishlists is not None and (book.id in wishlists) else False
             return CategoryDetailViewModel(category=category, books=books, wishlists=wishlists)
         
     return CategoryDetailViewModel(category=category, books=books)

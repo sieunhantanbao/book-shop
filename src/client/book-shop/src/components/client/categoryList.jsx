@@ -10,7 +10,7 @@ const CategoryItem = ({ category, imageBaseUrl }) => (
             <div className="card-body">
                 <h5 className="card-title">{category.name}</h5>
                 <p className="card-text">{category.short_description}</p>
-                <a href={`/book/categories/${category.slug}`} className="btn btn-primary">Details</a>
+                <a href={`/book/categories/detail/${category.slug}`} className="btn btn-primary">Details</a>
             </div>
         </div>
     </div>
@@ -27,14 +27,13 @@ const Footer = () => (
     </div>
 );
 
-function CategoryList() {
+function CategoryList({load_all=false}) {
     const imageBaseUrl = `${import.meta.env.VITE_API_URL}/static/files_uploaded`;
     const dispatch = useDispatch();
     const { items, loading, error } = useSelector(state => state.categories);
-    const getAllCategories = false;
 
     useEffect(() => {
-        dispatch(fetchCategories(getAllCategories));
+        dispatch(fetchCategories(load_all));
     }, [dispatch]);
 
     if (loading) return <img src="/client/img/loading_icon.gif" height="64" width="64" alt="Loading"/>;
@@ -52,7 +51,7 @@ function CategoryList() {
                     ))}
                 </div>
             </div>
-            {!getAllCategories && <Footer />}
+            {!load_all && <Footer />}
         </div>
     );
 }

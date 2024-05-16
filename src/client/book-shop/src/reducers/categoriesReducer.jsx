@@ -1,14 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchCategories, fetchCategories4ddl } from '../actions/categories';
+import { fetchCategories, fetchCategories4ddl, fetchCategoryDetail } from '../actions/categories';
 
 export const categoriesSlice = createSlice({
     name: 'categories',
     initialState: {
         items: [],
-        ddlItems: [],
         loading: false,
+        error: null,
+        ddlItems: [],
         ddlLoading: false,
-        error: null
+        category: null,
+        loadingCategory: false,
+        errorCategory: null
     },
     reducers: {
         // Reducer logic for other sync actions can be defined here
@@ -37,6 +40,17 @@ export const categoriesSlice = createSlice({
             .addCase(fetchCategories4ddl.rejected, (state, action) => {
                 state.ddlLoading = false;
                 state.error = action.payload;
+            }).addCase(fetchCategoryDetail.pending, (state) => {
+                state.loadingCategory = true;
+                state.errorCategory = null;
+            })
+            .addCase(fetchCategoryDetail.fulfilled, (state, action) => {
+                state.loadingCategory = false;
+                state.category = action.payload;
+            })
+            .addCase(fetchCategoryDetail.rejected, (state, action) => {
+                state.loadingCategory = false;
+                state.errorCategory = action.payload;
             });
     }
 });

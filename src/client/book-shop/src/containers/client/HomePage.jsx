@@ -21,7 +21,6 @@ function HomePage() {
             </div>
             <div className="col-md-12">
                 <BookList title="BOOKS"></BookList>
-                {/* {{ book.book_list(books, star_rating, wishlists, 'BOOKS', False, request.args, categories) }} */}
             </div>
             </div>
         </div>

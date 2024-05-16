@@ -1,6 +1,6 @@
 from uuid import UUID
 from sqlalchemy import func, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from models.rating import BookRatingViewModel
 from schemas.rating import Rating
@@ -82,8 +82,9 @@ def get_book_comments(db: Session, book_id: UUID)-> list[BookRatingViewModel]:
     Returns:
         _type_: _description_
     """
-    
-    book_comments = db.query(Rating).filter(Rating.book_id==book_id, Rating.is_reviewed).order_by(desc(Rating.created_at)).all()
+    book_comments = db.query(Rating).options(joinedload(Rating.user)) \
+                                    .filter(Rating.book_id == book_id, Rating.is_reviewed) \
+                                    .order_by(Rating.created_at.desc()).all()
     return book_comments
 
 def create_or_update(db: Session, user_id: UUID, book_id: UUID, rating_value: float, review_comment: str):
