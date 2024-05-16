@@ -3,6 +3,12 @@ from uuid import UUID
 from pydantic import BaseModel
 from typing import Optional
 
+class UserInRatingViewModel(BaseModel):
+    first_name: str
+    last_name: str
+    class Config:
+        orm_mode = True
+        
 class BookRatingViewModel(BaseModel):
     id: UUID
     user_id: UUID
@@ -11,6 +17,7 @@ class BookRatingViewModel(BaseModel):
     comment: str
     is_reviewed: bool
     created_at: datetime
+    user: Optional[UserInRatingViewModel]
     class Config:
         orm_mode: True
         

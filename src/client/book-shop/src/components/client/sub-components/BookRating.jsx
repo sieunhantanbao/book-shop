@@ -1,9 +1,9 @@
 import React from 'react';
 import './BookRating.css';
 
-function BookRating({ subjectId, totalRatings, averageRatingValue }) {
+function BookRating({ subjectId, totalRatings, averageRatingValue, showScore }) {
     averageRatingValue = averageRatingValue || 0;
-
+    showScore = showScore==undefined?true: showScore;
     const stars = [];
     for (let i = 1; i <= 5; i++) {
         if (averageRatingValue >= i) {
@@ -15,29 +15,38 @@ function BookRating({ subjectId, totalRatings, averageRatingValue }) {
         }
     }
 
+    const renderScore = () =>{
+        if (showScore){
+            return (
+                <div className="score">
+                    {averageRatingValue > 0 ? (
+                        <>
+                            <span className="score-rating">{averageRatingValue.toFixed(2)}</span>
+                            <span className="score-rating-average-text">({totalRatings} ratings)</span>
+                        </>
+                    ) : (
+                        <>
+                            <span className="score-rating">N/A</span>
+                            <span className="score-rating-average-text">(0 rating)</span>
+                        </>
+                    )}
+                </div>
+            );
+        }
+        return null;
+    } 
+
     return (
-        <div className="rating" data-id={subjectId} title="Book rating">
+        <div className="float-start rating" data-id={subjectId} title="Book rating">
             {stars.map(star => (
                 <div className="star" key={`star-${star.props['data-value']}`}>
                     {star}
                     <span className="selected"></span>
                 </div>
             ))}
-            <div className="score">
-                {averageRatingValue > 0 ? (
-                    <>
-                        <span className="score-rating">{averageRatingValue.toFixed(2)}</span>
-                        <span className="score-rating-average-text">({totalRatings} ratings)</span>
-                    </>
-                ) : (
-                    <>
-                        <span className="score-rating">N/A</span>
-                        <span className="score-rating-average-text">(0 rating)</span>
-                    </>
-                )}
-            </div>
+            {renderScore()}
         </div>
     );
 }
-
 export default BookRating;
+

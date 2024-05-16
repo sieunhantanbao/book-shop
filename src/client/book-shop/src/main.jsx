@@ -6,8 +6,18 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NotFoundLayout from "./layouts/NotFoundLayout.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
 import HomePage from "./containers/client/HomePage.jsx";
-import NewPage from "./containers/client/new_page.jsx";
+import BookDetailPage from "./containers/client/BookDetailPage.jsx";
 import NotFoundPage from "./containers/client/404.jsx";
+import BookCategoryPage from "./containers/client/BookCategoryPage.jsx";
+import BookCategoryDetailPage from "./containers/client/BookCategoryDetailPage.jsx";
+import LoginLayout from "./layouts/LoginLayout.jsx";
+import LoginPage from "./containers/auth/LoginPage.jsx";
+import LogoutPage from "./containers/auth/LogoutPage.jsx";
+import BookWishlistPage from "./containers/client/BookWishlistPage.jsx";
+
+const LoginLayoutRoute = ({ children }) => {
+  return <LoginLayout>{children}</LoginLayout>;
+};
 
 const NotFoundLayoutRoute = ({ children }) => {
   return <NotFoundLayout>{children}</NotFoundLayout>;
@@ -22,8 +32,13 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path="/auth/login" element={<LoginLayoutRoute><LoginPage /></LoginLayoutRoute>} />
+          <Route path="/auth/logout" element={<LoginLayoutRoute><LogoutPage /></LoginLayoutRoute>} />
           <Route path="/" element={<MainLayoutRoute><HomePage /></MainLayoutRoute>} />
-          <Route path="/new-page" element={<MainLayoutRoute><NewPage /></MainLayoutRoute>} />
+          <Route path="/book/detail/:book_id" element={<MainLayoutRoute><BookDetailPage /></MainLayoutRoute>} />
+          <Route path="/book/categories/all" element={<MainLayoutRoute><BookCategoryPage /></MainLayoutRoute>} />
+          <Route path="/book/categories/detail/:cat_id" element={<MainLayoutRoute><BookCategoryDetailPage /></MainLayoutRoute>} />
+          <Route path="/book/wishlist" element={<MainLayoutRoute><BookWishlistPage /></MainLayoutRoute>} />
           <Route path="*" element={<NotFoundLayoutRoute><NotFoundPage /></NotFoundLayoutRoute>} />
         </Routes>
       </BrowserRouter>
