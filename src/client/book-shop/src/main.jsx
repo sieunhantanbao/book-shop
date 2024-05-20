@@ -14,6 +14,9 @@ import LoginLayout from "./layouts/LoginLayout.jsx";
 import LoginPage from "./containers/auth/LoginPage.jsx";
 import LogoutPage from "./containers/auth/LogoutPage.jsx";
 import BookWishlistPage from "./containers/client/BookWishlistPage.jsx";
+import RegisterUserPage from "./containers/auth/RegisterUserPage.jsx";
+import ChangePasswordPage from "./containers/auth/ChangePasswordPage.jsx";
+import MyProfilePage from "./containers/auth/MyProfilePage.jsx";
 
 const LoginLayoutRoute = ({ children }) => {
   return <LoginLayout>{children}</LoginLayout>;
@@ -33,7 +36,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/auth/login" element={<LoginLayoutRoute><LoginPage /></LoginLayoutRoute>} />
+          <Route path="/auth/register" element={<LoginLayoutRoute><RegisterUserPage /></LoginLayoutRoute>} />
           <Route path="/auth/logout" element={<LoginLayoutRoute><LogoutPage /></LoginLayoutRoute>} />
+          <Route path="/auth/change-password" element={<MainLayoutRoute><ChangePasswordPage /></MainLayoutRoute>} />
+          <Route path="/auth/profile" element={<MainLayoutRoute><MyProfilePage /></MainLayoutRoute>} />
           <Route path="/" element={<MainLayoutRoute><HomePage /></MainLayoutRoute>} />
           <Route path="/book/detail/:book_id" element={<MainLayoutRoute><BookDetailPage /></MainLayoutRoute>} />
           <Route path="/book/categories/all" element={<MainLayoutRoute><BookCategoryPage /></MainLayoutRoute>} />
