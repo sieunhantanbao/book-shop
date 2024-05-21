@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { changePassword } from "../../actions/auth";
 import { getUserDetails } from "../../utils/ultil";
 import { useNavigate } from "react-router-dom";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 function ChangePasswordPage() {
-    const [inputs, setInputs] = useState({current_password:"", new_password:"", confirm_new_password:"", email:""});
+    const [inputs, setInputs] = useState({ current_password: "", new_password: "", confirm_new_password: "", email: "" });
     const dispatch = useDispatch();
-    const error = useSelector(state => state.auths.errorChangePasswordResult);
+    const [inputError, setInputError] = useState();
     const navigationTo = useNavigate();
 
     useEffect(() => {
@@ -16,7 +17,7 @@ function ChangePasswordPage() {
         if (!userDetail) {
             navigationTo('/');
         }
-        setInputs(values =>({...values, email: userDetail.email}));
+        setInputs(values => ({ ...values, email: userDetail.email }));
     }, []);
 
     const handleChange = (event) => {
@@ -26,15 +27,25 @@ function ChangePasswordPage() {
 
     const handleFormSubmit = async (event) => {
         event.preventDefault();
-        console.log(inputs);
-        // await dispatch(changePassword(inputs));
-        if (!error) {
+        if (!inputs.current_password) {
+            setInputError("Current password could not be empty");
+            return;
+        }
+        if (inputs.new_password != inputs.confirm_new_password) {
+            setInputError("The new password and confirm password does not match");
+            return;
+        }
+        try {
+            var result = await dispatch(changePassword(inputs));
+            unwrapResult(result);
             navigationTo("/");
+        } catch (error) {
+            setInputError(error.message);
         }
     }
 
     return (
-        <div className="row" style={{backgroundColor: "white"}}>
+        <div className="row" style={{ backgroundColor: "white" }}>
             <div className="col-md-4">
                 &nbsp;
             </div>
@@ -71,12 +82,17 @@ function ChangePasswordPage() {
                             <span className="required-asterisk">*</span>
                         </div>
                         <div className="col-md-8">
-                            <input type="password" name="confirm_new_password" value={inputs.confirm_new_password} onClick={handleChange} className="form-control" placeholder="Confirm New Password" />
+                            <input type="password" name="confirm_new_password" value={inputs.confirm_new_password} onChange={handleChange} className="form-control" placeholder="Confirm New Password" />
+                        </div>
+                    </div>
+                    <div className="form-group row mt-3">
+                        <div className="col-md-12">
+                            {inputError && <div className="text-danger">{inputError}</div>}
                         </div>
                     </div>
                     <div className="form-group row mt-3">
                         <div className="col-md-4">
-                            <button type="submit" className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3">Update</button>
+                            <button type="submit" className="btn btn-primary btn-block gradient-custom-2 mb-3">Update</button>
                         </div>
                     </div>
                 </form>

@@ -1,5 +1,5 @@
 import UserDetails from "../models/UserDetail"
-import { JWT_TOKEN, MY_USER_PROFILE } from "../constants/constants"
+import { JWT_TOKEN } from "../constants/constants"
 import { jwtDecode } from "jwt-decode";
 import MyUserProfile from "../models/MyUserProfile";
 
@@ -12,10 +12,9 @@ export function getUserDetails() {
     return null;
 }
 
-export function getMyUserProfile() {
-    var myUserProfile = localStorage.getItem(MY_USER_PROFILE);
-    if(myUserProfile){
-        return new MyUserProfile(myUserProfile);
+export function convertToMyUserProfile(response) {
+    if(response){
+        return new MyUserProfile(response);
     }
     return null;
 }

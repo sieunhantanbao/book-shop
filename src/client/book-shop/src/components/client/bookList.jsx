@@ -42,9 +42,7 @@ function BookList({title}) {
                     </div>
                     <div className="row">
                         { books.map(book => (
-                            <>
                                 <BookItem key={book.id} book={book} imageBaseUrl={imageBaseUrl} />
-                            </>
                         ))}
                     </div>
                 </div> 

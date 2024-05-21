@@ -79,11 +79,11 @@ class UpdateMyProfileModel(BaseModel):
     email: EmailStr = Field(..., description="User's email address")
     first_name: str = Field(..., description="User's first name")
     last_name: str = Field(..., description="User's last name")
-    telephone: str = Field(..., description="User's telephone number")
-    address: str = Field(..., description="User's address")
-    experience_in: str = Field(..., description="User's experience in")
-    addition_detail: str = Field(..., description="User's addition detail")
-    date_of_birth: str = Field(..., description="User's Date of birth")
+    telephone: Optional[str] = None
+    address: Optional[str] = None
+    experience_in: Optional[str] = None
+    addition_detail: Optional[str] = None
+    date_of_birth: Optional[str] = None
     class Config:
         # Pydantic V2 config to raise all validation errors at once
         validate_default = True

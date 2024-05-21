@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { changePassword, getMyProfile, login, logout, registerUser } from '../actions/auth';
-import { JWT_TOKEN, MY_USER_PROFILE } from '../constants/constants';
+import { JWT_TOKEN } from '../constants/constants';
 
 export const authSlice = createSlice({
     name: 'auths',
@@ -12,9 +12,9 @@ export const authSlice = createSlice({
         registerUserResult: null,
         loadingRegisterUserResult: false,
         errorRegisterUserResult: null,
-        changePasswordResult: null,
+        changePasswordResultStatus: null,
+        changePasswordResultMessage: null,
         loadingChangePasswordResult: false,
-        errorChangePasswordResult: null,
         loadingMyProfileResult: false,
         errorMyProfileResult: null
     },
@@ -44,7 +44,6 @@ export const authSlice = createSlice({
                 state.loading = false;
                 state.token = null;
                 localStorage.removeItem(JWT_TOKEN);
-                localStorage.removeItem(MY_USER_PROFILE);
                 state.isAuthenticated = false;
             }).addCase(logout.rejected, (state, action) => {
                 state.loading = false;
@@ -61,22 +60,21 @@ export const authSlice = createSlice({
                 state.errorRegisterUserResult = action.payload;
             }).addCase(changePassword.pending, (state) => {
                 state.loadingChangePasswordResult = true;
-                state.errorChangePasswordResult = null;
             })
             .addCase(changePassword.fulfilled, (state, action) => {
                 state.loadingChangePasswordResult = false;
-                state.changePasswordResult = action.payload;
+                state.changePasswordResultStatus = action.payload.status;
             })
             .addCase(changePassword.rejected, (state, action) => {
                 state.loadingChangePasswordResult = false;
-                state.errorChangePasswordResult = action.payload;
+                state.changePasswordResultStatus = action.payload?.status;
+                state.changePasswordResultMessage = action.payload?.message;
             }).addCase(getMyProfile.pending, (state) => {
                 state.loadingMyProfileResult = true;
                 state.errorMyProfileResult = null;
             })
             .addCase(getMyProfile.fulfilled, (state, action) => {
                 state.loadingMyProfileResult = false;
-                localStorage.setItem(MY_USER_PROFILE, action.payload);
             })
             .addCase(getMyProfile.rejected, (state, action) => {
                 state.loadingMyProfileResult = false;

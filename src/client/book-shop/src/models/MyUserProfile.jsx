@@ -1,7 +1,7 @@
 class MyUserProfile {
     constructor(response) {
         this.user_id = response.id ? response.id : null;
-        this.email = response.sub ? response.sub : null;
+        this.email = response.email ? response.email : null;
         this.first_name = response.first_name ? response.first_name : null;
         this.last_name = response.last_name ? response.last_name : null;
         this.telephone = response.telephone ? response.telephone : null;

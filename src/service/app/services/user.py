@@ -131,7 +131,7 @@ def update_profile(db: Session, model: UpdateMyProfileModel) -> status:
         existing_user.address = model.address
         existing_user.experience_in = model.experience_in
         existing_user.addition_detail = model.addition_detail
-        existing_user.date_of_birth =  datetime.strptime(model.date_of_birth, '%m/%d/%Y')
+        existing_user.date_of_birth =  datetime.strptime(model.date_of_birth, '%m/%d/%Y') if model.date_of_birth else None
         
         existing_user.updated_at = datetime.now()
         
