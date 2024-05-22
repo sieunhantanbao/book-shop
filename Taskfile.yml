@@ -1,0 +1,21 @@
+version: '3'
+
+tasks:
+  run-frontend:
+    desc: "Run the React frontend"
+    dir: src/client/book-shop
+    cmds:
+      - npm run dev
+
+  run-backend:
+    desc: "Run the FastAPI backend"
+    dir: src/service
+    cmds:
+      # For Window
+      - cmd /c start_backend.bat
+      # For Linux (uncomment below line)
+      # - ./start_backend.sh
+  run-all:
+    desc: "Run both frontend and backend concurrently"
+    cmds:
+      - concurrently "task run-frontend" "task run-backend"
