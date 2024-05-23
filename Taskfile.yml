@@ -12,9 +12,9 @@ tasks:
     dir: src/service
     cmds:
       # For Window
-      - cmd /c start_backend.bat
+      # - cmd /c start_backend.bat
       # For Linux (uncomment below line)
-      # - ./start_backend.sh
+      - ./start_backend.sh
   run-all:
     desc: "Run both frontend and backend concurrently"
     cmds:

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { changePassword, getMyProfile, login, logout, registerUser } from '../actions/auth';
-import { JWT_TOKEN } from '../constants/constants';
+import { changePassword, getMyProfile, login, logout, registerUser, refreshToken } from '../actions/auth';
+import { JWT_TOKEN, JWT_REFRESH_TOKEN } from '../constants/constants';
 
 export const authSlice = createSlice({
     name: 'auths',
@@ -8,6 +8,8 @@ export const authSlice = createSlice({
         token: null,
         loading: false,
         error: null,
+        loadingRefreshToken: false,
+        errorRefreshToken: null,
         isAuthenticated: false,
         registerUserResult: null,
         loadingRegisterUserResult: false,
@@ -29,14 +31,30 @@ export const authSlice = createSlice({
                 state.isAuthenticated = false;
             }).addCase(login.fulfilled, (state, action) => {
                 state.loading = false;
-                state.token = action.payload;
-                localStorage.setItem(JWT_TOKEN, action.payload);
+                state.token = action.payload.access_token;
+                localStorage.setItem(JWT_TOKEN, action.payload.access_token);
+                localStorage.setItem(JWT_REFRESH_TOKEN, action.payload.refresh_token);
                 state.isAuthenticated = true;
             }).addCase(login.rejected, (state, action) => {
+                state.loadingRefreshToken = false;
+                state.isAuthenticated = false;
+                state.errorRefreshToken = action.payload;
+            }).addCase(refreshToken.pending, (state) => {
+                state.loadingRefreshToken = true;
+                state.errorRefreshToken = null;
+                state.isAuthenticated = false;
+            }).addCase(refreshToken.fulfilled, (state, action) => {
+                state.loadingRefreshToken = false;
+                state.token = action.payload.access_token;
+                localStorage.setItem(JWT_TOKEN, action.payload.access_token);
+                localStorage.setItem(JWT_REFRESH_TOKEN, action.payload.refresh_token);
+                state.isAuthenticated = true;
+            }).addCase(refreshToken.rejected, (state, action) => {
                 state.loading = false;
                 state.isAuthenticated = false;
                 state.error = action.payload;
-            }).addCase(logout.pending, (state) => {
+            })
+            .addCase(logout.pending, (state) => {
                 state.loading = true;
                 state.error = null;
                 state.isAuthenticated = false;
@@ -44,6 +62,7 @@ export const authSlice = createSlice({
                 state.loading = false;
                 state.token = null;
                 localStorage.removeItem(JWT_TOKEN);
+                localStorage.removeItem(JWT_REFRESH_TOKEN);
                 state.isAuthenticated = false;
             }).addCase(logout.rejected, (state, action) => {
                 state.loading = false;

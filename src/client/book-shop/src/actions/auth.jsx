@@ -38,7 +38,24 @@ export const login = createAsyncThunk(
       if (!response.data.access_token) {
         throw new Error('Email or password is incorrect');
       }
-      return response.data.access_token;
+      const { access_token, refresh_token } = response.data;
+      return {access_token, refresh_token};
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const refreshToken = createAsyncThunk(
+  'auths/refreshToken',
+  async (refreshToken, { rejectWithValue }) => {
+    try {
+      const response = await HttpRequestInstance.post(`/auth/refresh-token?refresh_token=${refreshToken}`);
+      if (!response.data.access_token) {
+        throw new Error('Failed to re-issuing the access token from refresh token');
+      }
+      const { access_token, refresh_token } = response.data;
+      return {access_token, refresh_token};
     } catch (error) {
       return rejectWithValue(error.message);
     }
