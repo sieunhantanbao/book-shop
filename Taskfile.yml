@@ -3,7 +3,7 @@ version: '3'
 tasks:
   run-frontend:
     desc: "Run the React frontend"
-    dir: src/client/book-shop
+    dir: src/client
     cmds:
       - npm run dev
 
