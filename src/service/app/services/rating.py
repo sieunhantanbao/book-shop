@@ -2,8 +2,8 @@ from uuid import UUID
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session, joinedload
 
-from models.rating import BookRatingViewModel
-from schemas.rating import Rating
+from app.models.rating import BookRatingViewModel
+from app.schemas.rating import Rating
 
 # def get_all(db: Session, user_id: UUID) -> list[Rating]:
 #     """ Get all book rating value by user_id

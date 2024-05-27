@@ -1,7 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel
-from models.image import ImageViewModel
+from app.models.image import ImageViewModel
 
 class BaseAdminCategoryViewModel(BaseModel):
     id: UUID
@@ -13,7 +13,7 @@ class BaseAdminCategoryViewModel(BaseModel):
     images: Optional[List[ImageViewModel]] = None
     
     class Config:
-        orm_mode: True
+        from_attributes: True
         
 class AdminCategoryCreateOrUpdateRequestModel(BaseModel):
     id: Optional[UUID] = None

@@ -7,7 +7,7 @@ class UserInRatingViewModel(BaseModel):
     first_name: str
     last_name: str
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 class BookRatingViewModel(BaseModel):
     id: UUID
@@ -19,7 +19,7 @@ class BookRatingViewModel(BaseModel):
     created_at: datetime
     user: Optional[UserInRatingViewModel]
     class Config:
-        orm_mode: True
+        from_attributes: True
         
 
 class BookReviewCreateModel(BaseModel):

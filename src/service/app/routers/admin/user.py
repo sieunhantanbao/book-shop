@@ -1,12 +1,12 @@
 from typing import List
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from models.user import AdminUserViewModel
-from ultils.utils import http_exception
-from services.auth import admin_token_interceptor
-from database import get_db_context
-from schemas.user import User
-from services import user as _user_service
+from app.models.user import AdminUserViewModel
+from app.ultils.utils import http_exception
+from app.services.auth import admin_token_interceptor
+from app.database import get_db_context
+from app.schemas.user import User
+from app.services import user as _user_service
 
 router = APIRouter(prefix="/api/admin/users", tags=["Administrator User"])
 

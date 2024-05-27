@@ -1,17 +1,17 @@
 import json
 from typing import List, Optional, Annotated
 from uuid import UUID
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from models.rating import BookReviewCreateModel
-from models.category import CategoryDetailViewModel, CategoryForDdlViewModel, CategoryView2Model, CategoryViewModel
-from ultils import constants
-from ultils.utils import http_exception
-from services.auth import optional_token_interceptor, token_interceptor
-from database import get_db_context, redis_client
-from schemas.user import User
-from services import book as book_service, rating as rating_service, wishlist as wishlist_service
-from models.book import BookDetailViewModel, BookFeaturedViewModel, BookFilterInputModel, BookRelatedViewModel
+from app.models.rating import BookReviewCreateModel
+from app.models.category import CategoryDetailViewModel, CategoryForDdlViewModel, CategoryView2Model, CategoryViewModel
+from app.ultils import constants
+from app.ultils.utils import http_exception
+from app.services.auth import optional_token_interceptor, token_interceptor
+from app.database import get_db_context, redis_client
+from app.schemas.user import User
+from app.services import book as book_service, rating as rating_service, wishlist as wishlist_service
+from app.models.book import BookDetailViewModel, BookFeaturedViewModel, BookFilterInputModel, BookRelatedViewModel
 
 router = APIRouter(prefix="/api/books", tags=["Book"])
 

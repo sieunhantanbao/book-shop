@@ -34,7 +34,7 @@ const CarouselItems = ({ items, imageBaseUrl }) => (
 );
 
 function FeaturedBookCarousel() {
-    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/static/files_uploaded`;
+    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
     const dispatch = useDispatch();
     const { featuredBooks, loadingFeaturedBook, errorFeaturedBook } = useSelector(state => state.books);
     useEffect(() => {

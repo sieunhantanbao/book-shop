@@ -11,7 +11,7 @@ function BookList({title}) {
     const dispatch = useDispatch();
     const { books, loadingSerachBook, errorSearchBook } = useSelector(state => state.books);
 
-    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/static/files_uploaded`;
+    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
 
     useEffect(() => {
 

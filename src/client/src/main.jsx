@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import store from './store';
+import store from './store/index.jsx';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NotFoundLayout from "./layouts/NotFoundLayout.jsx";

@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import redis
 import os
-from settings import SQLALCHEMY_DATABASE_URL
+from app.settings import SQLALCHEMY_DATABASE_URL
 
 def get_db_context():
     try:

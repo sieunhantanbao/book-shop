@@ -1,10 +1,11 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, create_engine
+from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy import pool
 
 from alembic import context
-from settings import SQLALCHEMY_DATABASE_URL
+from app.settings import SQLALCHEMY_DATABASE_URL
 from sqlalchemy import MetaData
 
 # this is the Alembic Config object, which provides
@@ -23,7 +24,11 @@ config.set_main_option('sqlalchemy.url', SQLALCHEMY_DATABASE_URL)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = MetaData().create_all(create_engine(SQLALCHEMY_DATABASE_URL))
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+if not database_exists(engine.url):
+    create_database(engine.url)
+
+target_metadata = MetaData().create_all(engine)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

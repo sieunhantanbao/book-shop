@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import BookRating from "./sub-components/BookRating";
 import SafeHtlm from "../common/SafeHtlm";
 function BookDetailInfo({book}) {
-    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/static/files_uploaded`;
+    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
 
     return (
         <>

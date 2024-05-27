@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel
-from models.book import BookDetailViewModel
-from models.image import ImageViewModel
+from app.models.book import BookDetailViewModel
+from app.models.image import ImageViewModel
 
 class CategoryViewModel:
     id: UUID
@@ -15,7 +15,7 @@ class CategoryViewModel:
     images: List[ImageViewModel]
     
     class Config:
-        orm_mode: True
+        from_attributes: True
         
 class CategoryDetailViewModel:
     category: CategoryViewModel
@@ -39,10 +39,10 @@ class CategoryView2Model(BaseModel):
     def as_dict(self):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
     class Config:
-        orm_mode: True
+        from_attributes: True
 
 class CategoryForDdlViewModel(BaseModel):
     id: UUID
     name: str
     class Config:
-        orm_mode: True
+        from_attributes: True

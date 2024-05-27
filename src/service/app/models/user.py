@@ -13,7 +13,7 @@ class UserProfileViewModel(BaseModel):
     addition_detail: Optional[str] = None
     date_of_birth: Optional[datetime] = None
     class Config:
-        orm_mode: True
+        from_attributes: True
 
 class ChangeUserPasswordModel(BaseModel):
     email: EmailStr = Field(..., description="User's email address")
@@ -98,4 +98,4 @@ class AdminUserViewModel(BaseModel):
     addition_detail: Optional[str] = None
     date_of_birth: Optional[datetime] = None
     class Config:
-        orm_mode: True
+        from_attributes: True

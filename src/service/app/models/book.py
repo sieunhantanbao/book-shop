@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel, field_validator
-from models.image import ImageViewModel
-from models.rating import BookRatingViewModel
+from app.models.image import ImageViewModel
+from app.models.rating import BookRatingViewModel
 
 class BaseBookViewModel:
     id: UUID
@@ -36,7 +36,7 @@ class BookRelatedViewModel(BaseModel, BaseBookViewModel):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
     
     class Config:
-        orm_mode: True
+        from_attributes: True
 
 class BookDetailViewModel(BaseModel, BaseBookViewModel):
     book_comments: Optional[List[BookRatingViewModel]] = None
@@ -46,7 +46,7 @@ class BookDetailViewModel(BaseModel, BaseBookViewModel):
     rating_statistic: Optional[dict[str, float]] = None
     
     class Config:
-        orm_mode: True
+        from_attributes: True
         
 class BookFeaturedViewModel(BaseModel):
     id: UUID
@@ -61,7 +61,7 @@ class BookFeaturedViewModel(BaseModel):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
     
     class Config:
-        orm_mode: True
+        from_attributes: True
         
 
 class BookFilterInputModel(BaseModel):
