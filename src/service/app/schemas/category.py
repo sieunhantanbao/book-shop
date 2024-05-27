@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from database import Base
+from app.database import Base
 from .base_entity import BaseEntity
 from .image import Image
 from sqlalchemy.orm import relationship

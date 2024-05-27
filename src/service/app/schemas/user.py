@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Column, String, Time
-from database import Base
+from app.database import Base
 from .base_entity import BaseEntity
 from passlib.context import CryptContext
 from sqlalchemy.orm import relationship

@@ -1,0 +1,106 @@
+services:
+  mypostgres:
+    image: postgres:latest
+    container_name: mypostgres
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - app-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  myredis:
+    image: redis:latest
+    container_name: myredis
+    networks:
+      - app-network
+
+  book-shop-api:
+    build:
+      context: src/service
+      dockerfile: Dockerfile
+    image: sieunhantanbao/book-shop-api:latest
+    container_name: book-shop-api
+    restart: unless-stopped
+    environment:
+      - APP_SECRET_KEY=${APP_SECRET_KEY}
+      - REDIS_HOST=myredis
+      - REDIS_PORT=6379
+      - UPLOAD_FOLDER=${UPLOAD_FOLDER}
+      - ALLOWED_EXTENSIONS=${ALLOWED_EXTENSIONS}
+      - DB_ENGINE=${DB_ENGINE}
+      - DB_HOST=mypostgres
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+    depends_on:
+      - mypostgres
+      - migration
+      - myredis
+    ports:
+      - "8001:8000"
+    volumes:
+      - $HOME/projects/shared/book-shop/files_uploaded/:/app/app/static/files_uploaded/
+      - $HOME/projects/shared/book-shop/config/backend/.env/:/app/.env
+    networks:
+      - app-network
+    command: uvicorn app.main:app --host 0.0.0.0
+
+  book-shop-frontend:
+    build:
+      context: src/client
+      dockerfile: Dockerfile
+      args:
+      - API_URL=http://localhost:8001
+    image: sieunhantanbao/book-shop-frontend:latest
+    container_name: book-shop-frontend
+    restart: unless-stopped
+    depends_on:
+      - book-shop-api
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    command: ["nginx", "-g", "daemon off;"]
+
+  migration:
+    build:
+      context: src/service
+      dockerfile: Dockerfile
+    image: sieunhantanbao/book-shop-migration:latest
+    environment:
+      - REDIS_HOST=myredis
+      - REDIS_PORT=6379
+      - DB_ENGINE=${DB_ENGINE}
+      - DB_HOST=mypostgres
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
+      - WAIT_HOSTS=mypostgres:5432
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    entrypoint:
+            - /bin/bash
+            - -c
+            - |
+                /app/wait && \
+                alembic upgrade head
+    depends_on:
+      - mypostgres
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  postgres-data:

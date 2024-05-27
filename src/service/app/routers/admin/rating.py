@@ -2,12 +2,12 @@ from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from models.admin.rating import BaseAdminRatingViewModel
-from ultils.utils import http_exception
-from services.auth import admin_token_interceptor
-from database import get_db_context
-from schemas.user import User
-from services.admin import rating as _rating_service
+from app.models.admin.rating import BaseAdminRatingViewModel
+from app.ultils.utils import http_exception
+from app.services.auth import admin_token_interceptor
+from app.database import get_db_context
+from app.schemas.user import User
+from app.services.admin import rating as _rating_service
 
 router = APIRouter(prefix="/api/admin/ratings", tags=["Administrator Rating"])
 

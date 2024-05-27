@@ -9,4 +9,4 @@ class WishlistViewModel(BaseModel):
     created_date: time
     
     class Config:
-        orm_mode: True
+        from_attributes: True

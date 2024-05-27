@@ -1,7 +1,7 @@
 import React from 'react';
 import BookItem from './sub-components/BookItem';
 function BookRelated({title, books, onWishlistPage=false}) {
-    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/static/files_uploaded`;
+    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
 
     if (!books) return <img src="/client/img/loading_icon.gif" height="64" width="64" alt="Loading"/>;
 

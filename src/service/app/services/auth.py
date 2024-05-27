@@ -4,12 +4,12 @@ import time
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from ultils.constants import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
 from sqlalchemy.orm import Session
-from schemas.user import User, verify_password
 from jose import JWTError, jwt
 from uuid import UUID
-from settings import JWT_SECRET, JWT_ALGORITHM
+from app.schemas.user import User, verify_password
+from app.ultils.constants import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
+from app.settings import JWT_SECRET, JWT_ALGORITHM
 
 oa2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/token")
 opt_oa2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/token", auto_error=False)

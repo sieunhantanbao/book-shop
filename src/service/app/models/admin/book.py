@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel, field_validator
-from models.image import ImageViewModel
+from app.models.image import ImageViewModel
 
 class BaseAdminBookViewModel(BaseModel):
     id: UUID
@@ -31,7 +31,7 @@ class BaseAdminBookViewModel(BaseModel):
     updated_at: Optional[datetime] = None
     
     class Config:
-        orm_mode: True
+        from_attributes: True
 
 class AdminBookCreateOrUpdateRequestModel(BaseModel):
     id: Optional[UUID] = None

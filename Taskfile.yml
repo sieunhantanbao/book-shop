@@ -19,3 +19,33 @@ tasks:
     desc: "Run both frontend and backend concurrently"
     cmds:
       - concurrently "task run-frontend" "task run-backend"
+
+  dc-build:
+    desc: "Docker build all services"
+    cmds:
+      - docker compose build
+  
+  dc-up:
+    desc: "Up and runing all services"
+    cmds:
+      - docker compose up -d
+
+  dc-build-up:
+    desc: "Docker build then Up and runing all services"
+    cmds:
+      - docker compose up -d --build
+  
+  dc-down:
+    desc: "Docker compose down all services"
+    cmds:
+      - docker compose down
+
+  d-clean-img:
+    desc: "Remove all unused images"
+    cmds:
+      - docker rmi -f $(docker images -f "dangling=true" -q)
+  
+  default:
+    desc: Show this help
+    cmds:
+      - task --list

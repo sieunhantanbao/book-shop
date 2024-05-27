@@ -2,10 +2,10 @@
 from typing import List
 from uuid import UUID
 from sqlalchemy import desc
-from models.admin.rating import BaseAdminRatingViewModel
-from schemas.rating import Rating
 from datetime import datetime
 from sqlalchemy.orm import Session
+from app.models.admin.rating import BaseAdminRatingViewModel
+from app.schemas.rating import Rating
 
 def get_all_pending_approval(db: Session) -> List[BaseAdminRatingViewModel]:
     """ Get all pending rating for approval
