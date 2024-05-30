@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFeaturedBooks } from '../../actions/books';
+import { getApiUrl } from '../../utils/ultil';
 
 const CarouselIndicators = ({ items }) => (
     <div className="carousel-indicators">
@@ -34,7 +35,7 @@ const CarouselItems = ({ items, imageBaseUrl }) => (
 );
 
 function FeaturedBookCarousel() {
-    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
     const dispatch = useDispatch();
     const { featuredBooks, loadingFeaturedBook, errorFeaturedBook } = useSelector(state => state.books);
     useEffect(() => {

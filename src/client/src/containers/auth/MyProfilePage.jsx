@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { getMyProfile, updateMyProfile } from "../../actions/auth";
-import { convertToMyUserProfile, getUserDetails } from "../../utils/ultil";
+import { convertToMyUserProfile, getApiUrl, getUserDetails } from "../../utils/ultil";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 
 function MyProfilePage() {
   const dispatch = useDispatch();
-  const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
+  const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
   const [message, setMessage] = useState({ color: "green", text: "" });
   const [userProfile, setUserProfile] = useState({}); // Ensure userProfile is initialized as an empty object
   const navigationTo = useNavigate();

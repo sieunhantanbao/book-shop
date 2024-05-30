@@ -14,6 +14,7 @@ services:
   myredis:
     image: redis:latest
     container_name: myredis
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     networks:
       - app-network
 
@@ -28,6 +29,7 @@ services:
       - APP_SECRET_KEY=${APP_SECRET_KEY}
       - REDIS_HOST=myredis
       - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - UPLOAD_FOLDER=${UPLOAD_FOLDER}
       - ALLOWED_EXTENSIONS=${ALLOWED_EXTENSIONS}
       - DB_ENGINE=${DB_ENGINE}
@@ -77,6 +79,7 @@ services:
     environment:
       - REDIS_HOST=myredis
       - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - DB_ENGINE=${DB_ENGINE}
       - DB_HOST=mypostgres
       - DB_USERNAME=${DB_USERNAME}

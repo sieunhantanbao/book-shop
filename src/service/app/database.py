@@ -19,4 +19,4 @@ LocalSession = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 
 Base = declarative_base()
 
-redis_client = redis.Redis(host=os.environ['REDIS_HOST'], port=os.environ['REDIS_PORT'], db=0)
+redis_client = redis.Redis(host=os.environ['REDIS_HOST'], port=os.environ['REDIS_PORT'], password= os.getenv('REDIS_PASSWORD', None), db=0)
