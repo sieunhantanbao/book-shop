@@ -4,6 +4,7 @@ import { fetchCategoryDetail } from "../../actions/categories";
 import { useParams } from 'react-router-dom';
 import BookRelated from '../../components/client/bookRelated';
 import './BookCategoryDetailPage.css';
+import { getApiUrl } from '../../utils/ultil';
 
 function BookCategoryDetailPage() {
     const { cat_id } = useParams();
@@ -14,7 +15,7 @@ function BookCategoryDetailPage() {
         dispatch(fetchCategoryDetail(cat_id));
     }, [dispatch]);
 
-    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
     if (loadingCategory) return <img src="/client/img/loading_icon.gif" height="64" width="64" alt="Loading"/>;
     if (errorCategory) return <div>Error: {errorCategory}</div>;
     if (category === null) return <img src="/client/img/loading_icon.gif" height="64" width="64" alt="Loading"/>;

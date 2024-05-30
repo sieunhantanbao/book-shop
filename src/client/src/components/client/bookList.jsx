@@ -4,6 +4,7 @@ import { fetchSearchBooks } from '../../actions/books';
 import BookItem from './sub-components/BookItem';
 import BookFilter from './sub-components/BookFilter';
 import './bookList.css';
+import { getApiUrl } from '../../utils/ultil';
 function BookList({title}) {
 
     const [inputs, setInputs] = useState({min_rate_input:"1", max_rate_input: "5", min_price_input: "0", max_price_input: "100"});
@@ -11,7 +12,7 @@ function BookList({title}) {
     const dispatch = useDispatch();
     const { books, loadingSerachBook, errorSearchBook } = useSelector(state => state.books);
 
-    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
 
     useEffect(() => {
 

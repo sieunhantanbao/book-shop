@@ -1,6 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import HttpRequestInstance from '../utils/httpRequestInstance';
-const apiUrl = import.meta.env.VITE_API_URL;
 export const fetchCategories = createAsyncThunk(
     'categories/fetchCategories',
     async (getAll, { rejectWithValue }) => {

@@ -3,9 +3,11 @@ import { JWT_REFRESH_TOKEN, JWT_TOKEN } from '../constants/constants';
 import { refreshToken } from '../actions/auth';
 import { unwrapResult } from '@reduxjs/toolkit';
 import store from '../store';
+import { getApiUrl } from './ultil';
+
 
 const HttpRequestInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: getApiUrl(),
 });
 
 HttpRequestInstance.interceptors.request.use(

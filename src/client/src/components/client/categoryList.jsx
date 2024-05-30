@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../../actions/categories';
+import { getApiUrl } from '../../utils/ultil';
 
 // Separate component for CategoryItem
 const CategoryItem = ({ category, imageBaseUrl }) => (
@@ -28,7 +29,7 @@ const Footer = () => (
 );
 
 function CategoryList({load_all=false}) {
-    const imageBaseUrl = `${import.meta.env.VITE_API_URL}/app/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
     const dispatch = useDispatch();
     const { items, loading, error } = useSelector(state => state.categories);
 
