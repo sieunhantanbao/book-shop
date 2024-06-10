@@ -38,6 +38,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r src/service/requirements.txt
 
+    - name: Rename environment file
+      run: mv src/service/sample.env src/service/.env
     # - name: Set up database
     #   run: |
     #     sudo apt-get install sqlite3
