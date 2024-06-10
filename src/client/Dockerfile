@@ -13,10 +13,6 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Modify the .env file using sed
-ARG API_URL
-RUN sed -i "s|VITE_API_URL=.*|VITE_API_URL=$API_URL|" .env
-
 # Build the Vite application
 RUN npm run build
 

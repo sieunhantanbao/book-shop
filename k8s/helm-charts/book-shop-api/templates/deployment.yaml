@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "book-shop-api.fullname" . }}
+  labels:
+    app: {{ include "book-shop-api.name" . }}
+    app.kubernetes.io/name: {{ include "book-shop-api.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "book-shop-api.name" . }}
+      app.kubernetes.io/name: {{ include "book-shop-api.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "book-shop-api.name" . }}
+        app.kubernetes.io/name: {{ include "book-shop-api.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: bookshopapi
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_SECRET_KEY
+              value: "{{ .Values.env.APP_SECRET_KEY }}"
+            - name: REDIS_HOST
+              value: "{{ .Values.env.REDIS_HOST }}"
+            - name: REDIS_PORT
+              value: "{{ .Values.env.REDIS_PORT }}"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.redisSecretRef.name }}"
+                  key: "{{ .Values.redisSecretRef.key }}"
+            - name: UPLOAD_FOLDER
+              value: "{{ .Values.env.UPLOAD_FOLDER }}"
+            - name: ALLOWED_EXTENSIONS
+              value: "{{ .Values.env.ALLOWED_EXTENSIONS }}"
+            - name: DB_ENGINE
+              value: "{{ .Values.env.DB_ENGINE }}"
+            - name: DB_HOST
+              value: "{{ .Values.env.DB_HOST }}"
+            - name: DB_USERNAME
+              value: "{{ .Values.env.DB_USERNAME }}"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.postgresSecretRef.name }}"
+                  key: "{{ .Values.postgresSecretRef.key }}"
+            - name: DB_PORT
+              value: "{{ .Values.env.DB_PORT }}"
+            - name: DB_NAME
+              value: "{{ .Values.env.DB_NAME }}"
+            - name: DEFAULT_ADMIN_PASSWORD
+              value: "{{ .Values.env.DEFAULT_ADMIN_PASSWORD }}"
+            - name: JWT_SECRET
+              value: "{{ .Values.env.JWT_SECRET }}"
+            - name: JWT_ALGORITHM
+              value: "{{ .Values.env.JWT_ALGORITHM }}"
+            - name: ALLOWED_ORIGINS
+              value: "{{ .Values.env.ALLOWED_ORIGINS }}"
+          volumeMounts:
+            - name: files-uploaded
+              mountPath: /app/app/static/files_uploaded/
+      volumes:
+        - name: files-uploaded
+          persistentVolumeClaim:
+            claimName: book-shop-files-pvc

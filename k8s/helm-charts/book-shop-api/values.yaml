@@ -1,0 +1,38 @@
+image:
+  repository: sieunhantanbao/book-shop-api
+  tag: v1
+  pullPolicy: IfNotPresent
+
+replicas: 5
+
+service:
+  type: ClusterIP
+  port: 8000
+
+env:
+  APP_SECRET_KEY: "myrandomuntellsecretfastapi_k8s"
+  REDIS_HOST: "myredis-master"
+  REDIS_PORT: "6379"
+  UPLOAD_FOLDER: "app/static/files_uploaded"
+  ALLOWED_EXTENSIONS: "['jpg', 'jpeg', 'png', 'gif']"
+  DB_ENGINE: "postgresql"
+  DB_HOST: "mypostgres-postgresql"
+  DB_PORT: "5432"
+  DB_NAME: "bookshopdb_k8s"
+  DB_USERNAME: "postgres"
+  DEFAULT_ADMIN_PASSWORD: "12345678"
+  JWT_SECRET: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2i/bL8RBDeq6tKOdgaP0mNYpiUZIHT2QZjc8wZgvZEqQx4avnkujE92emGS1p6b6/y229oNj+vkSKXCMHJ3FUG3ytFfDNSDMMqp1gLq2n0oRJT8KKHfBApf/v/BK5aYGD9sKZ/FSEapXN79nwBywabQPpa5jpcFjLQD3cg8ezLWPfnyVS76i3mHpVWwPUABHqT4DFaz0PDXtZa2TAIYf7tMa3NNcWHA9OgRtfIbTqkimUdy6aW3w0GGav1KPdfxNMQ0m7+cOE9uc8yYR0DavyFe8b3Tz1xUKV2oKNfnyRkOWasHYTI9PZUwnnHWCa74X5LI6xJZ9myVecq/YDXw9qQIDAQAB"
+  JWT_ALGORITHM: "HS256"
+  ALLOWED_ORIGINS: "http://localhost:8080"
+
+postgresSecretRef:
+  key: postgres-password
+  name: mypostgres-postgresql
+
+redisSecretRef:
+  key: redis-password
+  name: myredis
+
+volume:
+  fileUploadedPath: /var/data/bookshopapi/files_uploaded/
+  capacity: 8Gi

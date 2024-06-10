@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "book-shop-api.fullname" . }}
+  labels:
+    helm.sh/chart: {{ include "book-shop-api.chart" . }}
+    app.kubernetes.io/name: {{ include "book-shop-api.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: "{{ .Chart.Version }}"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "book-shop-api.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
