@@ -8,5 +8,5 @@ class ImageViewModel(BaseModel):
     category_id: Optional[UUID] = None
     url: str
     
-    class Config:
+    class ConfigDict:
         from_attributes: True

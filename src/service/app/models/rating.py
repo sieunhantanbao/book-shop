@@ -6,7 +6,7 @@ from typing import Optional
 class UserInRatingViewModel(BaseModel):
     first_name: str
     last_name: str
-    class Config:
+    class ConfigDict:
         from_attributes = True
         
 class BookRatingViewModel(BaseModel):
@@ -18,7 +18,7 @@ class BookRatingViewModel(BaseModel):
     is_reviewed: bool
     created_at: datetime
     user: Optional[UserInRatingViewModel]
-    class Config:
+    class ConfigDict:
         from_attributes: True
         
 

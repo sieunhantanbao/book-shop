@@ -30,7 +30,7 @@ class BaseAdminBookViewModel(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     
-    class Config:
+    class ConfigDict:
         from_attributes: True
 
 class AdminBookCreateOrUpdateRequestModel(BaseModel):
@@ -58,5 +58,5 @@ class AdminBookCreateOrUpdateRequestModel(BaseModel):
             raise ValueError("The number of pages must be greater than zero")
         return v
 
-    class Config:
+    class ConfigDict:
         validate_assignment = True

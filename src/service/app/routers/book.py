@@ -1,5 +1,5 @@
 import json
-from typing import List, Optional, Annotated
+from typing import List, Optional
 from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
