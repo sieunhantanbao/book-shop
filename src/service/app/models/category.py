@@ -14,7 +14,7 @@ class CategoryViewModel:
     sort_order: int
     images: List[ImageViewModel]
     
-    class Config:
+    class ConfigDict:
         from_attributes: True
         
 class CategoryDetailViewModel:
@@ -38,11 +38,11 @@ class CategoryView2Model(BaseModel):
     
     def as_dict(self):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
-    class Config:
+    class ConfigDict:
         from_attributes: True
 
 class CategoryForDdlViewModel(BaseModel):
     id: UUID
     name: str
-    class Config:
+    class ConfigDict:
         from_attributes: True

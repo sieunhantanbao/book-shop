@@ -8,5 +8,5 @@ class WishlistViewModel(BaseModel):
     user_id: UUID
     created_date: time
     
-    class Config:
+    class ConfigDict:
         from_attributes: True

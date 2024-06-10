@@ -12,7 +12,7 @@ class UserProfileViewModel(BaseModel):
     experience_in: Optional[str] = None
     addition_detail: Optional[str] = None
     date_of_birth: Optional[datetime] = None
-    class Config:
+    class ConfigDict:
         from_attributes: True
 
 class ChangeUserPasswordModel(BaseModel):
@@ -40,7 +40,7 @@ class ChangeUserPasswordModel(BaseModel):
         return v
 
     confirm_new_password: str
-    class Config:
+    class ConfigDict:
         validate_default = True
     
 
@@ -71,7 +71,7 @@ class UserCreateOrUpdateModel(BaseModel):
             raise ValueError("passwords do not match")
         return v
     confirm_password: str
-    class Config:
+    class ConfigDict:
         # Pydantic V2 config to raise all validation errors at once
         validate_default = True
 
@@ -84,7 +84,7 @@ class UpdateMyProfileModel(BaseModel):
     experience_in: Optional[str] = None
     addition_detail: Optional[str] = None
     date_of_birth: Optional[str] = None
-    class Config:
+    class ConfigDict:
         # Pydantic V2 config to raise all validation errors at once
         validate_default = True
         
@@ -97,5 +97,5 @@ class AdminUserViewModel(BaseModel):
     experience_in: Optional[str] = None
     addition_detail: Optional[str] = None
     date_of_birth: Optional[datetime] = None
-    class Config:
+    class ConfigDict:
         from_attributes: True

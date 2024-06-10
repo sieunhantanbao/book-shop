@@ -35,7 +35,7 @@ class BookRelatedViewModel(BaseModel, BaseBookViewModel):
     def as_dict(self):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
     
-    class Config:
+    class ConfigDict:
         from_attributes: True
 
 class BookDetailViewModel(BaseModel, BaseBookViewModel):
@@ -45,7 +45,7 @@ class BookDetailViewModel(BaseModel, BaseBookViewModel):
     user_wishlists: Optional[List[UUID]] = None
     rating_statistic: Optional[dict[str, float]] = None
     
-    class Config:
+    class ConfigDict:
         from_attributes: True
         
 class BookFeaturedViewModel(BaseModel):
@@ -60,7 +60,7 @@ class BookFeaturedViewModel(BaseModel):
     def as_dict(self):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
     
-    class Config:
+    class ConfigDict:
         from_attributes: True
         
 

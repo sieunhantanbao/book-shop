@@ -12,7 +12,7 @@ class BaseAdminCategoryViewModel(BaseModel):
     sort_order: Optional[str] = None
     images: Optional[List[ImageViewModel]] = None
     
-    class Config:
+    class ConfigDict:
         from_attributes: True
         
 class AdminCategoryCreateOrUpdateRequestModel(BaseModel):
@@ -22,6 +22,6 @@ class AdminCategoryCreateOrUpdateRequestModel(BaseModel):
     thumbnail_url: Optional[str] = None
     sort_order: Optional[int] = 0
 
-    class Config:
+    class ConfigDict:
         validate_assignment = True
     
