@@ -1,0 +1,138 @@
+version: '3'
+
+vars:
+  NAMESPACE: dev
+  MY_POSTGRES_RELEASE_NAME: mypostgres
+  MY_REDIS_RELEASE_NAME: myredis
+  MY_API_RELEASE_NAME: mybookshopapi
+  MY_MIGRATION_RELEASE_NAME: mybookshopmigration
+  MY_FRONTEND_RELEASE_NAME: mybookshopfrontend
+
+tasks:
+  create_namespace:
+    desc: Check if the namespace exists, and create it if it doesn't
+    cmds:
+      - |
+        if ! kubectl get namespace {{.NAMESPACE}} &> /dev/null; then
+          echo "Namespace {{.NAMESPACE}} does not exist. Creating it now."
+          kubectl create namespace {{.NAMESPACE}}
+        else
+          echo "Namespace {{.NAMESPACE}} already exists."
+        fi
+
+  deploy_db:
+    desc: Check namespace, create if not exists, create secret and deploy PostgreSQL
+    cmds:
+      - task: create_namespace
+      - task: deploy_postgresql
+      - task: deploy_redis
+      - task: set_environment_variables
+
+  deploy_postgresql:
+    desc: Deploy the Bitnami PostgreSQL chart
+    cmds:
+      - helm repo add bitnami https://charts.bitnami.com/bitnami
+      - helm repo update
+      - helm install {{.MY_POSTGRES_RELEASE_NAME}} bitnami/postgresql --namespace {{.NAMESPACE}}
+  
+  deploy_redis:
+    desc: Deploy the Bitnami Redis chart
+    cmds:
+      - helm repo add bitnami https://charts.bitnami.com/bitnami
+      - helm repo update
+      - helm install {{.MY_REDIS_RELEASE_NAME}} bitnami/redis --namespace {{.NAMESPACE}}
+
+  set_environment_variables:
+    desc: Get the generated password from Postgresql and set to environment variable
+    cmds:
+      - |
+        export POSTGRES_PASSWORD=$(kubectl get secret --namespace {{.NAMESPACE}} {{.MY_POSTGRES_RELEASE_NAME}}-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d) && \
+        echo "POSTGRES_PASSWORD is $POSTGRES_PASSWORD"
+      - |
+        export REDIS_PASSWORD=$(kubectl get secret --namespace {{.NAMESPACE}}  {{.MY_REDIS_RELEASE_NAME}} -o jsonpath="{.data.redis-password}" | base64 -d) && \
+        echo "REDIS_PASSWORD is $REDIS_PASSWORD"
+
+  deploy_api:
+    desc: Deploy the Book Shop API
+    cmds:
+      - helm install {{.MY_API_RELEASE_NAME}} helm-charts/book-shop-api --namespace {{.NAMESPACE}}
+
+  deploy_frontend:
+    desc: Deploy the Book Shop Frontend
+    cmds:
+      - helm install {{.MY_FRONTEND_RELEASE_NAME}} helm-charts/book-shop-frontend --namespace {{.NAMESPACE}}
+
+  upgrade_api:
+    desc: Deploy the Book Shop API
+    cmds:
+      - helm upgrade {{.MY_API_RELEASE_NAME}} helm-charts/book-shop-api --namespace {{.NAMESPACE}}
+
+  upgrade_frontend:
+    desc: Deploy the Book Shop Frontend
+    cmds:
+      - helm upgrade {{.MY_FRONTEND_RELEASE_NAME}} helm-charts/book-shop-frontend --namespace {{.NAMESPACE}}
+  
+  mount_api_volume:
+    desc: Mount the Book shop API files_uploaded folder from host machine to Minikue
+    cmds:
+      - nohup minikube mount ./deployment/data/backend/files_uploaded/:/var/data/bookshopapi/files_uploaded/  > minikube_mount.log 2>&1 &
+  
+  run_migration:
+    desc: Deploy the Db migration
+    cmds:
+      - helm install {{.MY_MIGRATION_RELEASE_NAME}} helm-charts/book-shop-migration --namespace {{.NAMESPACE}}
+
+  list_all_resources:
+    desc: List all K8S resources with a namespance
+    cmds:
+      - kubectl get all --namespace {{.NAMESPACE}}
+
+  port_forward:
+    desc: Do port foward for front-end and api
+    cmds:
+      - concurrently "task port_forward_api" "task port_forward_frontend"
+  
+  port_forward_api:
+    desc: Do port foward for api
+    cmds:
+        - kubectl port-forward service/{{.MY_API_RELEASE_NAME}}-book-shop-api 8000:8000 --namespace {{.NAMESPACE}}
+
+  port_forward_frontend:
+    desc: Do port foward for front-end
+    cmds:
+      - kubectl port-forward service/{{.MY_FRONTEND_RELEASE_NAME}}-book-shop-frontend 8080:8080 --namespace {{.NAMESPACE}}
+  
+  port_forward_frontend:
+    desc: Do port foward for front-end
+    cmds:
+      - kubectl port-forward service/{{.MY_FRONTEND_RELEASE_NAME}}-book-shop-frontend 8080:8080 --namespace {{.NAMESPACE}}
+
+  cleanup_all:
+    desc: Clean up resources and uninstall the deployment
+    cmds:
+      - helm uninstall {{.MY_POSTGRES_RELEASE_NAME}} --namespace {{.NAMESPACE}}
+      - helm uninstall {{.MY_REDIS_RELEASE_NAME}} --namespace {{.NAMESPACE}}
+      - task cleanup_api
+      - task cleanup_frontend
+      - task cleanup_migration
+      - kubectl delete pvc data-mypostgres-postgresql-0  --namespace {{.NAMESPACE}}
+      - kubectl delete pvc redis-data-myredis-master-0   --namespace {{.NAMESPACE}}
+      - kubectl delete pvc redis-data-myredis-replicas-0 --namespace {{.NAMESPACE}}
+      - kubectl delete pvc redis-data-myredis-replicas-1 --namespace {{.NAMESPACE}}
+      - kubectl delete pvc redis-data-myredis-replicas-2 --namespace {{.NAMESPACE}}
+
+  cleanup_api:
+    desc: Clean up API
+    cmds:
+      - helm uninstall {{.MY_API_RELEASE_NAME}} --namespace {{.NAMESPACE}}
+
+  cleanup_frontend:
+    desc: Clean up Frontend
+    cmds:
+      - helm uninstall {{.MY_FRONTEND_RELEASE_NAME}} --namespace {{.NAMESPACE}}
+
+  cleanup_migration:
+    desc: Clean up Migration
+    cmds:
+      - helm uninstall {{.MY_MIGRATION_RELEASE_NAME}} --namespace {{.NAMESPACE}}
+

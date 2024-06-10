@@ -1,0 +1,10 @@
+image:
+  repository: sieunhantanbao/book-shop-frontend
+  tag: v3
+  pullPolicy: IfNotPresent
+
+replicas: 5
+
+service:
+  type: ClusterIP
+  port: 8080

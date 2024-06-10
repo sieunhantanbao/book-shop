@@ -1,0 +1,69 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "book-shop-migration.fullname" . }}
+  labels:
+    app: {{ include "book-shop-migration.name" . }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ include "book-shop-migration.name" . }}
+    spec:
+      containers:
+        - name: bookshopmigration
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              /app/wait && \
+              alembic upgrade head
+          env:
+            - name: APP_SECRET_KEY
+              value: "{{ .Values.env.APP_SECRET_KEY }}"
+            - name: REDIS_HOST
+              value: "{{ .Values.env.REDIS_HOST }}"
+            - name: REDIS_PORT
+              value: "{{ .Values.env.REDIS_PORT }}"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.redisSecretRef.name }}"
+                  key: "{{ .Values.redisSecretRef.key }}"
+            - name: UPLOAD_FOLDER
+              value: "{{ .Values.env.UPLOAD_FOLDER }}"
+            - name: ALLOWED_EXTENSIONS
+              value: "{{ .Values.env.ALLOWED_EXTENSIONS }}"
+            - name: DB_ENGINE
+              value: "{{ .Values.env.DB_ENGINE }}"
+            - name: DB_HOST
+              value: "{{ .Values.env.DB_HOST }}"
+            - name: DB_USERNAME
+              value: "{{ .Values.env.DB_USERNAME }}"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.postgresSecretRef.name }}"
+                  key: "{{ .Values.postgresSecretRef.key }}"
+            - name: DB_PORT
+              value: "{{ .Values.env.DB_PORT }}"
+            - name: DB_NAME
+              value: "{{ .Values.env.DB_NAME }}"
+            - name: DEFAULT_ADMIN_PASSWORD
+              value: "{{ .Values.env.DEFAULT_ADMIN_PASSWORD }}"
+            - name: JWT_SECRET
+              value: "{{ .Values.env.JWT_SECRET }}"
+            - name: JWT_ALGORITHM
+              value: "{{ .Values.env.JWT_ALGORITHM }}"
+            - name: ALLOWED_ORIGINS
+              value: "{{ .Values.env.ALLOWED_ORIGINS }}"
+            - name: WAIT_HOSTS
+              value: "{{ .Values.env.WAIT_HOSTS }}"
+            - name: WAIT_HOSTS_TIMEOUT
+              value: "{{ .Values.env.WAIT_HOSTS_TIMEOUT }}"
+            - name: WAIT_SLEEP_INTERVAL
+              value: "{{ .Values.env.WAIT_SLEEP_INTERVAL }}"
+            - name: WAIT_HOST_CONNECT_TIMEOUT
+              value: "{{ .Values.env.WAIT_HOST_CONNECT_TIMEOUT }}"
+      restartPolicy: Never
+  backoffLimit: 4
