@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
 
     - name: Setup prerequisites
-        uses: ./.github/actions/setup-prerequisites
+      uses: ./.github/actions/prerequisites
 
     - name: Rename environment file
       run: mv src/service/sample.env src/service/.env
