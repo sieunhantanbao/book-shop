@@ -1,5 +1,6 @@
-name: Continues Integration
+# ./.github/workflows/ci.yml
 
+name: Continues Integration
 on:
   pull_request:
     branches:

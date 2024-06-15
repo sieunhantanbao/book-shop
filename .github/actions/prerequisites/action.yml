@@ -1,3 +1,4 @@
+# ./.github/actions/prerequisites/action.yml
 name: Setup prerequisites actions
 description: "Setup prerequisites for the CI/CD pipelines"
 
@@ -19,6 +20,10 @@ runs:
         node-version: "latest"
         cache: npm
     
-    - name: Install dependencies
+    - name: Install backend dependencies
       shell: bash
-      run: task init
+      run: task init-backend
+
+    - name: Install frontend dependencies
+      shell: bash
+      run: task init-frontend

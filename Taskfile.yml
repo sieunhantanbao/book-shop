@@ -1,3 +1,4 @@
+# ./Taskfile.yml
 version: '3'
 
 vars:
@@ -5,12 +6,6 @@ vars:
 
 tasks:
 
-  init:
-    desc: "Init the project"
-    cmds:
-      - task init-backend
-      - task init-frontend
-      
   init-backend:
     desc: "Init backend - FastAPI"
     dir: src/service
