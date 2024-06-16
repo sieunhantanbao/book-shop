@@ -24,8 +24,6 @@ runs:
       shell: bash
       run: task init-backend
 
-    # - name: Install frontend dependencies
-    #   shell: bash
-    #   run: |
-    #     cd src/client
-    #     npm install
+    - name: Install frontend dependencies
+      shell: bash
+      run: task init-frontend
