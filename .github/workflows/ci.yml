@@ -1,53 +1,68 @@
-name: Continues Integration
+# ./.github/workflows/ci.yml
 
+name: Continues Integration
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  test:
+  test-backend:
     runs-on: ubuntu-latest
-
-    # services:
-    #   postgres:
-    #     image: postgres:latest
-    #     ports:
-    #       - 5432:5432
-    #     env:
-    #       POSTGRES_USER: postgres
-    #       POSTGRES_PASSWORD: postgres
-    #       POSTGRES_DB: test_db
-    #     options: >-
-    #       --health-cmd "pg_isready -U postgres"
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
-
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/checkout@v4
       with:
-        python-version: '3.12'
+          fetch-depth: 1 # Only get the latest commit; 0: get will git commit
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r src/service/requirements.txt
+    - name: Setup prerequisites
+      uses: ./.github/actions/prerequisites
 
     - name: Rename environment file
       run: mv src/service/sample.env src/service/.env
-    # - name: Set up database
-    #   run: |
-    #     sudo apt-get install sqlite3
-    #     python -m pip install sqlalchemy databases sqlite pytest
 
-    - name: Run tests
-      # env:
-      #   DATABASE_URL: "postgresql://postgres:postgres@localhost/test_db"
+    - name: Run backend tests
       run: |
         cd src/service
         pytest
+  # TODO: test front-end
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: [test-backend]
+    if: github.event_name == 'push'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+    - name: Get GitHub SHA
+      id: vars
+      run: echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
+
+    - name: Build and push backend image
+      run: |
+        cd src/service
+        IMAGE_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/bookshop-backend"
+        UNIQUE_TAG="${GITHUB_SHA::8}" # First 8 characters of the SHA
+        docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$UNIQUE_TAG .
+        docker push $IMAGE_NAME:latest
+        docker push $IMAGE_NAME:$UNIQUE_TAG
+
+    - name: Build and push frontend image
+      run: |
+        cd src/client
+        IMAGE_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/bookshop-frontend"
+        UNIQUE_TAG="${GITHUB_SHA::8}" # First 8 characters of the SHA
+        docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$UNIQUE_TAG .
+        docker push $IMAGE_NAME:latest
+        docker push $IMAGE_NAME:$UNIQUE_TAG

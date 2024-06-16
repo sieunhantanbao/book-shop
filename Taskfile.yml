@@ -1,6 +1,21 @@
+# ./Taskfile.yml
 version: '3'
 
 tasks:
+
+  init-backend:
+    desc: "Init backend - FastAPI"
+    dir: src/service
+    cmds:
+      - "python -m pip install --upgrade pip"
+      - "pip install -r requirements.txt"
+  
+  init-frontend:
+    desc: "Init frontend - React"
+    dir: src/client
+    cmds:
+      - npm install
+
   run-frontend:
     desc: "Run the React frontend"
     dir: src/client
