@@ -1,38 +1,14 @@
-# ./.github/workflows/ci.yml
+# ./.github/workflows/ci-build-and-push-artifact.yml
 
-name: Continues Integration
+name: Continues Integration - Build and push Artifact
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
-      
+
 jobs:
-  test-backend:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-          fetch-depth: 1 # Only get the latest commit; 0: get will git commit
-
-    - name: Setup prerequisites
-      uses: ./.github/actions/prerequisites
-
-    - name: Rename environment file
-      run: mv src/service/sample.env src/service/.env
-
-    - name: Run backend tests
-      run: |
-        cd src/service
-        pytest
-  # TODO: test front-end
   build-and-push:
     runs-on: ubuntu-latest
-    needs: [test-backend]
-    if: github.event_name == 'push'
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
