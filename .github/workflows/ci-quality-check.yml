@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  test-backend:
+  quality-check-backend:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -22,7 +22,19 @@ jobs:
       run: mv src/service/sample.env src/service/.env
 
     - name: Run backend tests
-      run: |
-        cd src/service
-        pytest
+      shell: bash
+      run: task test-backend
+
+    - name: Run backend tests coverage
+      shell: bash
+      run: task test-coverage-backend
+    
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4.0.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: src/service/coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
   # TODO: test front-end
