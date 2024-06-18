@@ -2,10 +2,11 @@ from datetime import timedelta
 from datetime import datetime, timezone
 import time
 from typing import Optional
+import jwt
+from jwt import PyJWTError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from jose import JWTError, jwt
 from uuid import UUID
 from app.schemas.user import User, verify_password
 from app.ultils.constants import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
@@ -139,7 +140,7 @@ def token_interceptor(token: str = Depends(oa2_bearer)) -> User:
         if expiry_on < current_epoch_time:
             raise token_exception(status.HTTP_401_UNAUTHORIZED)
         return user
-    except JWTError:
+    except PyJWTError:
         raise token_exception(status.HTTP_401_UNAUTHORIZED)
     
 def admin_token_interceptor(token: str = Depends(oa2_bearer)) -> User:
@@ -180,7 +181,7 @@ def optional_token_interceptor(token: Optional[str] = Depends(opt_oa2_bearer)) -
         if user.email is None or user.id is None or not user.is_active:
             return None
         return user
-    except JWTError:
+    except PyJWTError:
         return None
     
 def do_refresh_token(token: str) -> User:
@@ -203,5 +204,5 @@ def do_refresh_token(token: str) -> User:
         if user.email is None or user.id is None:
             raise token_exception(status.HTTP_401_UNAUTHORIZED)
         return user
-    except JWTError:
+    except PyJWTError:
         raise token_exception(status.HTTP_401_UNAUTHORIZED)

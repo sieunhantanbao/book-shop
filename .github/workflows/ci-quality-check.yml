@@ -25,7 +25,7 @@ jobs:
         sudo apt-get install -y trivy
 
     - name: Scan repository for vulnerabilities
-      continue-on-error: true
+      continue-on-error: false
       run: |
         trivy fs --severity HIGH,CRITICAL --output trivy-report.txt .
 
@@ -47,7 +47,7 @@ jobs:
         trivy image --severity HIGH,CRITICAL --output trivy-frontend-report.txt frontend:latest
 
     - name: Upload Trivy scan reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: trivy-reports
         path: |
@@ -79,6 +79,14 @@ jobs:
       shell: bash
       run: task test-coverage-backend
     
+    - name: Upload backend coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-coverage-reports
+        path: |
+          src/service/coverage.xml
+          src/service/htmlcov
+
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
