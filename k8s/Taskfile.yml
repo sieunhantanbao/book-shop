@@ -75,7 +75,7 @@ tasks:
   mount_api_volume:
     desc: Mount the Book shop API files_uploaded folder from host machine to Minikue
     cmds:
-      - nohup minikube mount ./deployment/data/backend/files_uploaded/:/var/data/bookshopapi/files_uploaded/  > minikube_mount.log 2>&1 &
+      - nohup minikube mount ~/projects/book-shop/k8s/deployment/data/backend/files_uploaded/:/var/data/bookshopapi/files_uploaded/  > minikube_mount.log 2>&1 &
   
   run_migration:
     desc: Deploy the Db migration
@@ -120,6 +120,7 @@ tasks:
       - kubectl delete pvc redis-data-myredis-replicas-0 --namespace {{.NAMESPACE}}
       - kubectl delete pvc redis-data-myredis-replicas-1 --namespace {{.NAMESPACE}}
       - kubectl delete pvc redis-data-myredis-replicas-2 --namespace {{.NAMESPACE}}
+      - kubectl get pv --no-headers --namespace {{.NAMESPACE}} | awk '/Released/ {print $1}' | xargs kubectl delete pv
 
   cleanup_api:
     desc: Clean up API
