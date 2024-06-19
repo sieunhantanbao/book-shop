@@ -1,6 +1,6 @@
 # ./.github/workflows/ci-quality-check.yml
 
-name: Continues Integration - Quality check
+name: CI
 on:
   pull_request:
     types: [opened, synchronize, reopened]
