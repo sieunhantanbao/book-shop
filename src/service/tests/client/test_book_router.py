@@ -12,6 +12,7 @@ from uuid import UUID
 import pytest
 import fakeredis
 
+################## COMMON SETUP ###############################
 # Create a mock for the token_interceptor dependency
 def override_token_interceptor():
     return User(
@@ -33,57 +34,60 @@ app.dependency_overrides[get_db_context] = override_get_db_context
 
 client = TestClient(app)
 
-# Mocking the book_service.get_book_wishlists function
-def mock_get_book_wishlists(db, user_id):
-    return [
-        BookRelatedViewModel(
-            id=UUID("11111111-1111-1111-1111-111111111111"),
-            title="Test Book",
-            slug="test-book",
-            short_description="Test short description",
-            description="Test description",
-            price=10.0,
-            isbn="1234567890",
-            author="Test Author",
-            publisher="Test Publisher",
-            publish_date=datetime.now(),
-            pages=100,
-            dimensions="10x10",
-            language="English",
-            thumbnail_url="http://example.com/image.png",
-            sort_order=1,
-            is_featured=False,
-            is_published=True,
-            category_id=UUID("22222222-2222-2222-2222-222222222222"),
-            average_rating_value=None,
-            total_ratings=None,
-            in_wishlist=True,
-            images=[]
-        )
-    ]
-    
-# Mock Class for Rating
-class MockBookAverageRating:
-    def __init__(self, book_id: UUID, average_rating_value: float, total_ratings: int):
-        self.book_id = book_id
-        self.average_rating_value = average_rating_value
-        self.total_ratings = total_ratings
-
-# Mocking the rating_service.get_all_average_rating function
-def mock_get_all_average_rating(db, book_ids):
-    return [
-        MockBookAverageRating(
-            book_id=UUID("11111111-1111-1111-1111-111111111111"),
-            average_rating_value=4.5,
-            total_ratings=10
-        )
-    ]
-    
-book_service.get_book_wishlists = MagicMock(side_effect=mock_get_book_wishlists)
-rating_service.get_all_average_rating = MagicMock(side_effect=mock_get_all_average_rating)
-
+################## TEST METHODS ###############################
 def test_get_book_wishlist_success():
+    # Arrange
+    def mock_get_book_wishlists(db, user_id):
+        return [
+            BookRelatedViewModel(
+                id=UUID("11111111-1111-1111-1111-111111111111"),
+                title="Test Book",
+                slug="test-book",
+                short_description="Test short description",
+                description="Test description",
+                price=10.0,
+                isbn="1234567890",
+                author="Test Author",
+                publisher="Test Publisher",
+                publish_date=datetime.now(),
+                pages=100,
+                dimensions="10x10",
+                language="English",
+                thumbnail_url="https://example.com/image.png",
+                sort_order=1,
+                is_featured=False,
+                is_published=True,
+                category_id=UUID("22222222-2222-2222-2222-222222222222"),
+                average_rating_value=None,
+                total_ratings=None,
+                in_wishlist=True,
+                images=[]
+            )
+        ]
+    
+    # Mock Class for Rating
+    class MockBookAverageRating:
+        def __init__(self, book_id: UUID, average_rating_value: float, total_ratings: int):
+            self.book_id = book_id
+            self.average_rating_value = average_rating_value
+            self.total_ratings = total_ratings
+
+    # Mocking the rating_service.get_all_average_rating function
+    def mock_get_all_average_rating(db, book_ids):
+        return [
+            MockBookAverageRating(
+                book_id=UUID("11111111-1111-1111-1111-111111111111"),
+                average_rating_value=4.5,
+                total_ratings=10
+            )
+        ]
+    
+    book_service.get_book_wishlists = MagicMock(side_effect=mock_get_book_wishlists)
+    rating_service.get_all_average_rating = MagicMock(side_effect=mock_get_all_average_rating)
+    # Act
     response = client.get("/api/books/wishlist")
+    
+    # Assert
     assert response.status_code == status.HTTP_200_OK
     books = response.json()
     assert len(books) == 1
@@ -129,9 +133,9 @@ def mock_get_all_categories(db, limit=None):
                 name="Category 1",
                 slug="category-1",
                 short_description="Short description 1",
-                thumbnail_url="http://example.com/image1.png",
+                thumbnail_url="https://example.com/image1.png",
                 sort_order=1,
-                images=[MockImageViewModel(id=UUID("33333333-3333-3333-3333-333333333333"), url="http://example.com/image1.png")]
+                images=[MockImageViewModel(id=UUID("33333333-3333-3333-3333-333333333333"), url="https://example.com/image1.png")]
             )
         ]
     return [
@@ -140,18 +144,18 @@ def mock_get_all_categories(db, limit=None):
             name="Category 1",
             slug="category-1",
             short_description="Short description 1",
-            thumbnail_url="http://example.com/image1.png",
+            thumbnail_url="https://example.com/image1.png",
             sort_order=1,
-            images=[MockImageViewModel(id=UUID("33333333-3333-3333-3333-333333333333"), url="http://example.com/image1.png")]
+            images=[MockImageViewModel(id=UUID("33333333-3333-3333-3333-333333333333"), url="https://example.com/image1.png")]
         ),
         MockCategoryView2Model(
             id=UUID("22222222-2222-2222-2222-222222222222"),
             name="Category 2",
             slug="category-2",
             short_description="Short description 2",
-            thumbnail_url="http://example.com/image2.png",
+            thumbnail_url="https://example.com/image2.png",
             sort_order=2,
-            images=[MockImageViewModel(id=UUID("44444444-4444-4444-4444-444444444444"), url="http://example.com/image2.png")]
+            images=[MockImageViewModel(id=UUID("44444444-4444-4444-4444-444444444444"), url="https://example.com/image2.png")]
         )
     ]
     
@@ -178,10 +182,10 @@ def mock_redis_client():
 #     assert len(categories) == 2
 #     assert categories[0]["id"] == "11111111-1111-1111-1111-111111111111"
 #     assert categories[0]["name"] == "Category 1"
-#     assert categories[0]["thumbnail_url"] == "http://example.com/image1.png"
+#     assert categories[0]["thumbnail_url"] == "https://example.com/image1.png"
 #     assert categories[1]["id"] == "22222222-2222-2222-2222-222222222222"
 #     assert categories[1]["name"] == "Category 2"
-#     assert categories[1]["thumbnail_url"] == "http://example.com/image2.png"
+#     assert categories[1]["thumbnail_url"] == "https://example.com/image2.png"
 
 # def test_get_categories_short(mock_redis_client):
 
@@ -191,4 +195,4 @@ def mock_redis_client():
 #     assert len(categories) == 1
 #     assert categories[0]["id"] == "11111111-1111-1111-1111-111111111111"
 #     assert categories[0]["name"] == "Category 1"
-#     assert categories[0]["thumbnail_url"] == "http://example.com/image1.png"
+#     assert categories[0]["thumbnail_url"] == "https://example.com/image1.png"
