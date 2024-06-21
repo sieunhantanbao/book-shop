@@ -68,9 +68,9 @@ tasks:
 
   test-coverage-backend:
     desc: Run the tests with coverage for backend
-    dir: src/service
+    # dir: src/service
     cmds:
-      - "pytest --cov-report=xml --cov-config=../../.coveragerc"
+      - "pytest --cov=src/service --cov-report=xml --cov-config=.coveragerc"
 
   default:
     desc: Show this help
