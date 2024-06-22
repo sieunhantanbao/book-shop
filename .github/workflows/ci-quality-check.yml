@@ -80,8 +80,9 @@ jobs:
       run: task test-backend
 
     - name: Run backend tests coverage
-      shell: bash
-      run: task test-coverage-backend
+      run: |
+        cd src/service
+        python -m pytest --cov=app --cov-report=xml --cov-report=html --cov-config=../../.coveragerc
     
     - name: Upload backend coverage reports
       uses: actions/upload-artifact@v4

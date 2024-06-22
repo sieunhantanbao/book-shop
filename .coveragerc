@@ -1,3 +1,17 @@
 [run]
-omit =
-    src/service/tests/*
+omit = 
+    */.venv/*
+    */tests/*
+    *apps.py
+    */__init__.py
+    *asgi*
+    *wsgi*
+    *admin.py
+    *urls.py
+    */migrations/*
+    */alembic/*
+
+[coverage:run]
+relative_files = True
+source = src/service/app
+branch = True
