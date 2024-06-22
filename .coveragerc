@@ -10,8 +10,3 @@ omit =
     *urls.py
     */migrations/*
     */alembic/*
-
-[coverage:run]
-relative_files = True
-source = src/service/app
-branch = True
