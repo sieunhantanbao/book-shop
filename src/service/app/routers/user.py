@@ -68,7 +68,7 @@ async def change_password(model: ChangeUserPasswordModel,
         case status.HTTP_404_NOT_FOUND:
             raise http_exception(404, "User does not exist or invalid current password")
         case status.HTTP_500_INTERNAL_SERVER_ERROR:
-            raise http_exception(500, "There was an error while creating user")
+            raise http_exception(500, "There was an error while changing the password")
     
 @router.post('/profile', status_code=status.HTTP_200_OK)
 async def update_myprofile(model: UpdateMyProfileModel,
@@ -88,7 +88,7 @@ async def update_myprofile(model: UpdateMyProfileModel,
         case status.HTTP_404_NOT_FOUND:
             raise http_exception(404, "User does not exist or invalid current password")
         case status.HTTP_500_INTERNAL_SERVER_ERROR:
-            raise http_exception(500, "There was an error while creating user")
+            raise http_exception(500, "There was an error while updating the profile")
 
 @router.post('/profile/photo')
 async def change_profile_photo(user_id: UUID,
