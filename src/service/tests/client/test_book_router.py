@@ -5,12 +5,16 @@ from app.main import app
 from app.schemas.user import User
 from app.services.auth import token_interceptor
 from app.database import get_db_context
-from app.models.book import BookRelatedViewModel
+from app.models.book import BookDetailViewModel, BookRelatedViewModel
+from app.models.category import CategoryForDdlViewModel
+from app.models.image import ImageViewModel
 from app.services import book as book_service, rating as rating_service
 from fastapi import status
 from uuid import UUID
 import pytest
 import fakeredis
+
+
 
 ################## COMMON SETUP ###############################
 # Create a mock for the token_interceptor dependency
@@ -28,6 +32,12 @@ def override_get_db_context():
     db_mock = MagicMock()
     return db_mock
 
+class MockBookAverageRating:
+        def __init__(self, book_id: UUID, average_rating_value: float, total_ratings: int):
+            self.book_id = book_id
+            self.average_rating_value = average_rating_value
+            self.total_ratings = total_ratings
+            
 # Apply the dependency overrides
 app.dependency_overrides[token_interceptor] = override_token_interceptor
 app.dependency_overrides[get_db_context] = override_get_db_context
@@ -64,13 +74,6 @@ def test_get_book_wishlist_success():
                 images=[]
             )
         ]
-    
-    # Mock Class for Rating
-    class MockBookAverageRating:
-        def __init__(self, book_id: UUID, average_rating_value: float, total_ratings: int):
-            self.book_id = book_id
-            self.average_rating_value = average_rating_value
-            self.total_ratings = total_ratings
 
     # Mocking the rating_service.get_all_average_rating function
     def mock_get_all_average_rating(db, book_ids):
@@ -196,3 +199,122 @@ def mock_redis_client():
 #     assert categories[0]["id"] == "11111111-1111-1111-1111-111111111111"
 #     assert categories[0]["name"] == "Category 1"
 #     assert categories[0]["thumbnail_url"] == "https://example.com/image1.png"
+
+#####################################################################################
+def test_get_categories_for_ddl():
+    # Arrange
+    def get_all_categories_for_ddl(db):
+        return [
+        CategoryForDdlViewModel(id=UUID("11111111-1111-1111-1111-111111111111"), name="Category 1"),
+        CategoryForDdlViewModel(id=UUID("22222222-2222-2222-2222-222222222222"), name="Category 2")
+    ]
+    book_service.get_all_categories_for_ddl = MagicMock(side_effect=get_all_categories_for_ddl)
+    
+    # Act
+    response = client.get("/api/books/categories-for-ddl")
+    # Assert
+    assert response.status_code == 200
+    categories = response.json()
+    assert isinstance(categories, list)
+    for category in categories:
+        assert "id" in category
+        assert "name" in category
+################################################################################
+def test_book_list_with_filter():
+    # Arrange
+    # Mock book_service.get_all
+    def get_all(db, filter_model):
+        return[
+            BookDetailViewModel(
+                id=UUID('12345678-1234-5678-1234-567812345678'), 
+                title="Book 1",
+                slug="book-1",
+                price=100.5,
+                isbn="ABC123456789010",
+                author="Author 1",
+                pages=200,
+                category_id=UUID('11111111-1111-1111-1111-111111111111'),
+                average_rating_value=4.5,
+                images=[
+                    ImageViewModel(
+                        id=UUID('11111111-1111-1111-1111-111111111111'),
+                        book_id=UUID('12345678-1234-5678-1234-567812345678'),
+                        url="https://samplemedia.com/book1.png"
+                    )
+                ]
+                ),
+            BookDetailViewModel(
+                id=UUID('87654321-4321-8765-4321-987654321098'), 
+                title="Book 2",
+                slug="book-2",
+                price=200.5,
+                isbn="DEF123456789010",
+                author="Author 2",
+                pages=300,
+                category_id=UUID('11111111-1111-1111-1111-111111111111'),
+                average_rating_value=4.0,
+                images=[
+                    ImageViewModel(
+                        id=UUID('22222222-2222-2222-2222-222222222222'),
+                        book_id=UUID('87654321-4321-8765-4321-987654321098'),
+                        url="https://samplemedia.com/book2.png"
+                    )
+                ]
+                )
+        ]
+    book_service.get_all = MagicMock(side_effect=get_all)
+    
+    def get_all_average_rating(db, book_ids):
+        return [
+            MockBookAverageRating(book_id=UUID('12345678-1234-5678-1234-567812345678'), average_rating_value= 4.5, total_ratings= 100),
+            MockBookAverageRating(book_id=UUID('87654321-4321-8765-4321-987654321098'), average_rating_value= 3.8, total_ratings= 50),
+        ]
+    rating_service.get_all_average_rating = MagicMock(side_effect=get_all_average_rating)
+    
+    # Mock rating_service.get_average_rating_statistic_by_book
+    class MockAverageRatingStatisticByBook():
+        def __init__(self, total_rating_1: int,
+                     total_rating_2: int,
+                     total_rating_3: int,
+                     total_rating_4: int,
+                     total_rating_5: int,
+                     total_ratings: int,
+                     average_rating: float,
+                     rating_value: float):
+            self.total_rating_1= total_rating_1
+            self.total_rating_2= total_rating_2
+            self.total_rating_3= total_rating_3
+            self.total_rating_4= total_rating_4
+            self.total_rating_5= total_rating_5
+            self.average_rating = average_rating
+            self.total_ratings = total_ratings
+            self.rating_value = rating_value
+            
+    def get_average_rating_statistic_by_book(db, book_id):
+        return True, [
+            MockAverageRatingStatisticByBook(
+                total_rating_1 =10,
+                total_rating_2 =20,
+                total_rating_3 =30,
+                total_rating_4 =25,
+                total_rating_5 =15,
+                total_ratings=100,
+                average_rating=4.5,
+                rating_value=4.0
+        )
+        ]
+    rating_service.get_average_rating_statistic_by_book = MagicMock(side_effect=get_average_rating_statistic_by_book)
+    
+    # Act
+    response = client.get('/api/books/search?min_price_input=0&max_price_input=100&min_rate_input=3&max_rate_input=5&sort_by=good_rating')
+    
+    # Assert
+    assert response.status_code == 200
+    books = response.json()
+    assert isinstance(books, list)
+    assert len(books) == 2
+    assert books[0]['id'] == '12345678-1234-5678-1234-567812345678'
+    assert books[0]['title'] == "Book 1"
+    assert books[1]['id'] == '87654321-4321-8765-4321-987654321098'
+    assert books[1]['title'] == "Book 2"
+        
