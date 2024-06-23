@@ -77,7 +77,7 @@ def test_get_book_wishlist_success():
         return [
             MockBookAverageRating(
                 book_id=UUID("11111111-1111-1111-1111-111111111111"),
-                average_rating_value=4.5,
+                average_rating_value=4,
                 total_ratings=10
             )
         ]
@@ -93,7 +93,7 @@ def test_get_book_wishlist_success():
     assert len(books) == 1
     assert books[0]["id"] == "11111111-1111-1111-1111-111111111111"
     assert books[0]["title"] == "Test Book"
-    assert books[0]["average_rating_value"] == 4.5
+    assert books[0]["average_rating_value"] == 4
     assert books[0]["total_ratings"] == 10
     
 ##############################################################################################
