@@ -1,3 +1,5 @@
+from http.client import HTTPException
+import uuid
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, patch
 from datetime import datetime
@@ -6,13 +8,16 @@ from app.schemas.user import User
 from app.services.auth import token_interceptor
 from app.database import get_db_context
 from app.models.book import BookDetailViewModel, BookRelatedViewModel
-from app.models.category import CategoryForDdlViewModel
+from app.models.category import CategoryForDdlViewModel, CategoryViewModel
 from app.models.image import ImageViewModel
-from app.services import book as book_service, rating as rating_service
+from app.services import book as book_service, rating as rating_service, wishlist as wishlist_service
 from fastapi import status
 from uuid import UUID
 import pytest
 import fakeredis
+from app.models.rating import BookRatingViewModel, UserInRatingViewModel
+from app.schemas.wishlist import WishList
+from app.models.wishlist import WishlistViewModel
 
 
 
@@ -220,6 +225,8 @@ def test_get_categories_for_ddl():
         assert "id" in category
         assert "name" in category
 ################################################################################
+#######Todo for /api/book/featured-books########################################
+################################################################################
 def test_book_list_with_filter():
     # Arrange
     # Mock book_service.get_all
@@ -317,4 +324,227 @@ def test_book_list_with_filter():
     assert books[0]['title'] == "Book 1"
     assert books[1]['id'] == '87654321-4321-8765-4321-987654321098'
     assert books[1]['title'] == "Book 2"
+##################################################################################################
+# Common mock/setup for get_book_by_id
+# Mock rating_service.get_average_rating_value_by_book
+def get_average_rating_value_by_book(db, book_id):
+    return [
+        MockBookAverageRating(
+            book_id=UUID("12345678-1234-5678-1234-567812345678"),
+            average_rating_value=4,
+            total_ratings=10
+        )
+    ]
+rating_service.get_average_rating_value_by_book = MagicMock(side_effect=get_average_rating_value_by_book)
+# Mock wishlist_service.get_by_user_and_book
+def get_by_user_and_book(db, id):
+    return WishList(
+        book_id=UUID('12345678-1234-5678-1234-567812345678'),
+        user_id=UUID('11111111-1111-1111-1111-111111111111')
+    )
+wishlist_service.get_by_user_and_book = MagicMock(side_effect=get_by_user_and_book)
+# Mock rating_service.get_average_rating_statistic_by_book
+class MockAverageRatingStatisticByBook():
+    def __init__(self, total_rating_1: int,
+                    total_rating_2: int,
+                    total_rating_3: int,
+                    total_rating_4: int,
+                    total_rating_5: int,
+                    total_ratings: int,
+                    average_rating: float,
+                    rating_value: float):
+        self.total_rating_1= total_rating_1
+        self.total_rating_2= total_rating_2
+        self.total_rating_3= total_rating_3
+        self.total_rating_4= total_rating_4
+        self.total_rating_5= total_rating_5
+        self.average_rating = average_rating
+        self.total_ratings = total_ratings
+        self.rating_value = rating_value
         
+def get_average_rating_statistic_by_book(db, book_id):
+    return True, [
+        MockAverageRatingStatisticByBook(
+            total_rating_1 =10,
+            total_rating_2 =20,
+            total_rating_3 =30,
+            total_rating_4 =25,
+            total_rating_5 =15,
+            total_ratings=100,
+            average_rating=4.5,
+            rating_value=4.0
+    )
+    ]
+rating_service.get_average_rating_statistic_by_book = MagicMock(side_effect=get_average_rating_statistic_by_book)
+# Mock rating_service.get_book_comments
+def get_book_comments(db, book_id):
+    return [
+        BookRatingViewModel(
+            id=uuid.uuid4(),
+            user_id=UUID('11111111-1111-1111-1111-111111111111'),
+            book_id=UUID('12345678-1234-5678-1234-567812345678'),
+            rating_value=4.0,
+            comment="Good book",
+            is_reviewed=True,
+            created_at=datetime.now(),
+            user=UserInRatingViewModel(first_name="First Name", last_name="Last Name")
+        )
+    ]
+rating_service.get_book_comments = MagicMock(side_effect=get_book_comments)
+# Mock book_service.get_books_by_cat
+def get_books_by_cat(db, cat_id, items, book_id):
+    return [
+        BookRelatedViewModel(
+        id=UUID("12345678-1234-5678-1234-567812345678"),
+        title="Test Book",
+        slug="test-book",
+        short_description="Test short description",
+        description="Test description",
+        price=10.0,
+        isbn="1234567890",
+        author="Test Author",
+        publisher="Test Publisher",
+        publish_date=datetime.now(),
+        pages=100,
+        dimensions="10x10",
+        language="English",
+        thumbnail_url="https://example.com/image.png",
+        sort_order=1,
+        is_featured=False,
+        is_published=True,
+        category_id=UUID("22222222-2222-2222-2222-222222222222"),
+        average_rating_value=None,
+        total_ratings=None,
+        in_wishlist=True,
+        images=[]
+        )
+    ]
+book_service.get_books_by_cat = MagicMock(side_effect = get_books_by_cat)
+# Mocking the rating_service.get_all_average_rating function
+def mock_get_all_average_rating(db, book_ids):
+    return [
+        MockBookAverageRating(
+            book_id=UUID("12345678-1234-5678-1234-567812345678"),
+            average_rating_value=4,
+            total_ratings=10
+        )
+    ]
+rating_service.get_all_average_rating = MagicMock(side_effect=mock_get_all_average_rating)
+# Mock book_service.get_related_books
+def get_related_books(db, book_id):
+    return [
+        BookRelatedViewModel(
+            id=UUID("12345678-1234-5678-1234-567812345678"),
+            title="Test Book",
+            slug="test-book",
+            short_description="Test short description",
+            description="Test description",
+            price=10.0,
+            isbn="1234567890",
+            author="Test Author",
+            publisher="Test Publisher",
+            publish_date=datetime.now(),
+            pages=100,
+            dimensions="10x10",
+            language="English",
+            thumbnail_url="https://example.com/image.png",
+            sort_order=1,
+            is_featured=False,
+            is_published=True,
+            category_id=UUID("22222222-2222-2222-2222-222222222222"),
+            average_rating_value=None,
+            total_ratings=None,
+            in_wishlist=True,
+            images=[]
+        )
+    ]
+book_service.get_related_books = MagicMock(side_effect=get_related_books)
+# Mock wishlist_service.get_all
+def get_all_wishlist(db, user_id):
+    return [
+        WishlistViewModel(
+            id=UUID(),
+            book_id=UUID('12345678-1234-5678-1234-567812345678'),
+            user_id=UUID('11111111-1111-1111-1111-111111111111')
+        )
+    ]
+wishlist_service.get_all = MagicMock(side_effect=get_all_wishlist)
+
+def test_get_book_by_id_success():
+    # Arrange
+    # Mock book_service.get_by_id
+    def get_book_by_id(db, id):
+        return BookDetailViewModel(
+            id=UUID('12345678-1234-5678-1234-567812345678'), 
+            title="Book 1",
+            slug="book-1",
+            price=100.5,
+            isbn="ABC123456789010",
+            author="Author 1",
+            pages=200,
+            category_id=UUID('11111111-1111-1111-1111-111111111111'),
+            average_rating_value=4.5,
+            images=[
+                ImageViewModel(
+                    id=UUID('11111111-1111-1111-1111-111111111111'),
+                    book_id=UUID('12345678-1234-5678-1234-567812345678'),
+                    url="https://samplemedia.com/book1.png"
+                )
+            ]
+        )
+    book_service.get_by_id = MagicMock(side_effect=get_book_by_id)
+    # Act
+    response = client.get('/api/books/12345678-1234-5678-1234-567812345678')
+    # Assert
+    assert response.status_code == 200
+    book = response.json()
+    assert isinstance(book, object)
+    assert book["id"]=="12345678-1234-5678-1234-567812345678"
+    assert book["title"]=="Book 1"
+
+
+def test_get_book_by_id_not_found():
+    # Arrange
+    book_service.get_by_id = MagicMock(return_value=None)
+    # Act
+    response = client.get('/api/books/99999999-9999-9999-9999-999999999999')
+    # Assert
+    assert response.status_code == 404
+    assert response.json()["detail"] == "The book could not be found"
+    
+###########################################################################################
+# # Common Mock/setup for get_category_by_id
+# def get_category_by_id(db, cat_id):
+#     return CategoryViewModel(
+#         id=UUID("22222222-2222-2222-2222-222222222222"),
+#         name="Category 1",
+#         slug="category-1",
+#         short_description="Short description",
+#         sort_order=1,
+#         thumbnail_url="",
+#         images = [
+#             ImageViewModel(
+#                 id=UUID('11111111-1111-1111-1111-111111111111'),
+#                 cat_id=UUID('22222222-2222-2222-2222-222222222222'),
+#                 url="https://samplemedia.com/category1.png"
+#             )
+#         ]
+#     )
+# book_service.get_category_by_id = MagicMock(side_effect = get_category_by_id)
+
+# def test_get_category_by_id_success():
+#     # Arrange
+#     def get_all_average_rating(db, book_ids):
+#         return [
+#             MockBookAverageRating(book_id=UUID('12345678-1234-5678-1234-567812345678'), average_rating_value= 4.5, total_ratings= 100),
+#             MockBookAverageRating(book_id=UUID('87654321-4321-8765-4321-987654321098'), average_rating_value= 3.8, total_ratings= 50),
+#         ]
+#     rating_service.get_all_average_rating = MagicMock(side_effect=get_all_average_rating)
+    
+#     # Act
+#     response = client.get("/api/books/categories/22222222-2222-2222-2222-222222222222")
+#     # Assert
+#     assert response.status_code == 200
+    
+
+    
