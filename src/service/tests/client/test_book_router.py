@@ -549,7 +549,7 @@ def test_get_category_by_id_success():
     assert data["category"]["name"] == "Category 1" 
     assert data["books"][0]["id"] == "12345678-1234-5678-1234-567812345678" 
     assert data["books"][0]["title"] == "Test Book" 
-    
+    assert data["books"][0]["in_wishlist"] == True
 
 def test_get_category_by_id_not_found():
     # Arrange
@@ -559,3 +559,124 @@ def test_get_category_by_id_not_found():
     # Assert
     assert response.status_code == 404
     assert response.json()["detail"] == "Category could not be found"
+    
+####################################################################################################
+def test_add_book_wishlist_success():
+    # Arrange
+    wishlist_service.create = MagicMock(return_value = True)
+    # Act
+    response = client.post("/api/books/add-wishlist/12345678-1234-5678-1234-567812345678")
+    # Assert
+    assert response.status_code == 200
+    result = response.json()
+    assert result == True
+
+def test_add_book_wishlist_bad_request():
+    # Arrange
+    wishlist_service.create = MagicMock(return_value = False)
+    # Act
+    response = client.post("/api/books/add-wishlist/12345678-1234-5678-1234-567812345678")
+    # Assert
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Bad request"
+
+# # TODO
+# def test_add_book_wishlist_unauthorized():
+#     # Arrange
+#     wishlist_service.create = MagicMock(return_value = False)
+#     # Act
+#     response = client.post("/api/books/add-wishlist/12345678-1234-5678-1234-567812345678")
+#     # Assert
+#     assert response.status_code == 401
+#     assert response.json()["detail"] == "You are not authorized"
+
+##################################################################################
+def test_remove_book_from_wishlist_success():
+    # Arrange
+    wishlist_service.delete_by_user_and_book = MagicMock(return_value = True)
+    # Act
+    response = client.delete("/api/books/remove-wishlist/12345678-1234-5678-1234-567812345678")
+    # Assert
+    assert response.status_code == 200
+    result = response.json()
+    assert result == True
+
+def test_remove_book_from_wishlist_bad_request():
+    # Arrange
+    wishlist_service.delete_by_user_and_book = MagicMock(return_value = False)
+    # Act
+    response = client.delete("/api/books/remove-wishlist/12345678-1234-5678-1234-567812345678")
+    # Assert
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Bad request"
+    
+###############################################################################################
+def test_add_rating_review_success():
+    # Arrange
+    rating_service.create_or_update = MagicMock(return_value = True)
+    model = {
+        "book_id": str(uuid.uuid4()),
+        "rating_value": 5,
+        "review_comment": "Good book" 
+    }
+    # Act
+    response = client.post("/api/books/add-review", json=model)
+    # Assert
+    assert response.status_code == 200
+    result = response.json()
+    assert result == True
+
+def test_add_rating_review_bad_request():
+    # Arrange
+    rating_service.create_or_update = MagicMock(return_value = False)
+    model = {
+        "book_id": str(uuid.uuid4()),
+        "rating_value": 5,
+        "review_comment": "Good book" 
+    }
+    # Act
+    response = client.post("/api/books/add-review", json = model)
+    # Assert
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Bad request"
+
+#####################################################################################
+def test_get_star_rating_statistic():
+    # Arrange
+    # Mock rating_service.get_average_rating_statistic_by_book
+    class MockAverageRatingStatisticByBook():
+        def __init__(self, total_rating_1: int,
+                     total_rating_2: int,
+                     total_rating_3: int,
+                     total_rating_4: int,
+                     total_rating_5: int,
+                     total_ratings: int,
+                     average_rating: float,
+                     rating_value: float):
+            self.total_rating_1= total_rating_1
+            self.total_rating_2= total_rating_2
+            self.total_rating_3= total_rating_3
+            self.total_rating_4= total_rating_4
+            self.total_rating_5= total_rating_5
+            self.average_rating = average_rating
+            self.total_ratings = total_ratings
+            self.rating_value = rating_value
+            
+    def get_average_rating_statistic_by_book(db, book_id):
+        return True, [
+            MockAverageRatingStatisticByBook(
+                total_rating_1 =10,
+                total_rating_2 =20,
+                total_rating_3 =30,
+                total_rating_4 =25,
+                total_rating_5 =15,
+                total_ratings=100,
+                average_rating=4.5,
+                rating_value=4.0
+        )
+        ]
+    rating_service.get_average_rating_statistic_by_book = MagicMock(side_effect=get_average_rating_statistic_by_book)
+    # Act
+    response = client.get("/api/books/star_rating_statistic/12345678-1234-5678-1234-567812345678")
+    # Assert
+    assert response.status_code == 200
