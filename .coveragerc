@@ -10,3 +10,4 @@ omit =
     *urls.py
     */migrations/*
     */alembic/*
+    */app/services/*
