@@ -392,7 +392,7 @@ def get_book_comments(db, book_id):
     ]
 rating_service.get_book_comments = MagicMock(side_effect=get_book_comments)
 # Mock book_service.get_books_by_cat
-def get_books_by_cat(db, cat_id, items, book_id):
+def get_books_by_cat(db, cat_id, size: int = 0, excluded_id: UUID = None):
     return [
         BookRelatedViewModel(
         id=UUID("12345678-1234-5678-1234-567812345678"),
@@ -513,38 +513,49 @@ def test_get_book_by_id_not_found():
     assert response.json()["detail"] == "The book could not be found"
     
 ###########################################################################################
-# # Common Mock/setup for get_category_by_id
-# def get_category_by_id(db, cat_id):
-#     return CategoryViewModel(
-#         id=UUID("22222222-2222-2222-2222-222222222222"),
-#         name="Category 1",
-#         slug="category-1",
-#         short_description="Short description",
-#         sort_order=1,
-#         thumbnail_url="",
-#         images = [
-#             ImageViewModel(
-#                 id=UUID('11111111-1111-1111-1111-111111111111'),
-#                 cat_id=UUID('22222222-2222-2222-2222-222222222222'),
-#                 url="https://samplemedia.com/category1.png"
-#             )
-#         ]
-#     )
-# book_service.get_category_by_id = MagicMock(side_effect = get_category_by_id)
+# Common Mock/setup for get_category_by_id
+def test_get_category_by_id_success():
+    # Arrange
+    def get_category_by_id(db, cat_id):
+        return CategoryViewModel(
+            id=UUID("22222222-2222-2222-2222-222222222222"),
+            name="Category 1",
+            slug="category-1",
+            short_description="Short description",
+            sort_order=1,
+            thumbnail_url="",
+            images = [
+                ImageViewModel(
+                    id=UUID('11111111-1111-1111-1111-111111111111'),
+                    cat_id=UUID('22222222-2222-2222-2222-222222222222'),
+                    url="https://samplemedia.com/category1.png"
+                )
+            ]
+        )
+    book_service.get_category_by_id = MagicMock(side_effect = get_category_by_id)
+    def get_all_average_rating(db, book_ids):
+        return [
+            MockBookAverageRating(book_id=UUID('12345678-1234-5678-1234-567812345678'), average_rating_value= 4.5, total_ratings= 100),
+            MockBookAverageRating(book_id=UUID('87654321-4321-8765-4321-987654321098'), average_rating_value= 3.8, total_ratings= 50),
+        ]
+    rating_service.get_all_average_rating = MagicMock(side_effect=get_all_average_rating)
+    
+    # Act
+    response = client.get("/api/books/categories/22222222-2222-2222-2222-222222222222")
+    # Assert
+    assert response.status_code == 200
+    data = response.json()
+    assert data["category"]["id"] == "22222222-2222-2222-2222-222222222222" 
+    assert data["category"]["name"] == "Category 1" 
+    assert data["books"][0]["id"] == "12345678-1234-5678-1234-567812345678" 
+    assert data["books"][0]["title"] == "Test Book" 
+    
 
-# def test_get_category_by_id_success():
-#     # Arrange
-#     def get_all_average_rating(db, book_ids):
-#         return [
-#             MockBookAverageRating(book_id=UUID('12345678-1234-5678-1234-567812345678'), average_rating_value= 4.5, total_ratings= 100),
-#             MockBookAverageRating(book_id=UUID('87654321-4321-8765-4321-987654321098'), average_rating_value= 3.8, total_ratings= 50),
-#         ]
-#     rating_service.get_all_average_rating = MagicMock(side_effect=get_all_average_rating)
-    
-#     # Act
-#     response = client.get("/api/books/categories/22222222-2222-2222-2222-222222222222")
-#     # Assert
-#     assert response.status_code == 200
-    
-
-    
+def test_get_category_by_id_not_found():
+    # Arrange
+    book_service.get_category_by_id = MagicMock(return_value=None)
+    # Act
+    response = client.get("/api/books/categories/99999999-9999-9999-9999-999999999999")
+    # Assert
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Category could not be found"
