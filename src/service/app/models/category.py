@@ -7,13 +7,13 @@ from app.models.image import ImageViewModel
 
 class CategoryViewModel:
     def __init__(self, id: UUID,name: str,slug: str,short_description: str,thumbnail_url: str,sort_order: int,images: List[ImageViewModel])-> None:
-        id=id
-        name= name
-        slug=slug
-        short_description=short_description
-        thumbnail_url=thumbnail_url
-        sort_order=sort_order
-        images=images
+        self.id = id
+        self.name = name
+        self.slug = slug
+        self.short_description = short_description
+        self.thumbnail_url = thumbnail_url
+        self.sort_order = sort_order
+        self.images = images
     class ConfigDict:
         from_attributes: True
         
