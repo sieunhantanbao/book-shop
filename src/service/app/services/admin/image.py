@@ -1,5 +1,5 @@
 from uuid import UUID
-from app.schemas.image import Image
+from schemas.image import Image
 from sqlalchemy.orm import Session
 
 def delete(db: Session, id: UUID):

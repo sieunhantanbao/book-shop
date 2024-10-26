@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, UploadFile, status
-from app.services.user import UserCreateOrUpdateModel, ChangeUserPasswordModel, UpdateMyProfileModel, UserProfileViewModel
-from app.ultils.utils import http_exception
-from app.services.auth import token_interceptor
-from app.database import get_db_context
+from services.user import UserCreateOrUpdateModel, ChangeUserPasswordModel, UpdateMyProfileModel, UserProfileViewModel
+from ultils.utils import http_exception
+from services.auth import token_interceptor
+from database import get_db_context
 from sqlalchemy.orm import Session
 from uuid import UUID
-from app.schemas.user import User
-from app.services import user as user_service
+from schemas.user import User
+from services import user as user_service
 
 router = APIRouter(prefix="/api/users", tags=["User"])
 

@@ -2,7 +2,6 @@
 version: '3'
 
 tasks:
-
   init-backend:
     desc: "Init backend - FastAPI"
     dir: src/service
@@ -16,6 +15,14 @@ tasks:
     cmds:
       - npm install
 
+  run-migration:
+    desc: "Init backend - FastAPI"
+    dir: src/service
+    cmds:
+      - "python -m pip install --upgrade pip"
+      - "pip install -r requirements.txt"
+      - "alembic upgrade head"
+
   run-frontend:
     desc: "Run the React frontend"
     dir: src/client
@@ -26,10 +33,11 @@ tasks:
     desc: "Run the FastAPI backend"
     dir: src/service
     cmds:
-      # For Window
-      # - cmd /c start_backend.bat
-      # For Linux (uncomment below line)
-      - ./start_backend.sh
+      - cmd: cmd /c start_backend.bat
+        platforms: [windows/amd64, windows]
+      - cmd:  ./start_backend.sh
+        platforms: [darwin, linux]
+
   run-all:
     desc: "Run both frontend and backend concurrently"
     cmds:

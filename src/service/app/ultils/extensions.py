@@ -2,7 +2,7 @@ from fastapi import UploadFile
 import os
 from werkzeug.utils import secure_filename
 import uuid
-from app.database import redis_client
+from database import redis_client
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

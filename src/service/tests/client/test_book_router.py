@@ -3,21 +3,21 @@ import uuid
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, patch
 from datetime import datetime
-from app.main import app
-from app.schemas.user import User
-from app.services.auth import token_interceptor
-from app.database import get_db_context
-from app.models.book import BookDetailViewModel, BookRelatedViewModel
-from app.models.category import CategoryForDdlViewModel, CategoryViewModel
-from app.models.image import ImageViewModel
-from app.services import book as book_service, rating as rating_service, wishlist as wishlist_service
+from main import app
+from schemas.user import User
+from services.auth import token_interceptor
+from database import get_db_context
+from models.book import BookDetailViewModel, BookRelatedViewModel
+from models.category import CategoryForDdlViewModel, CategoryViewModel
+from models.image import ImageViewModel
+from services import book as book_service, rating as rating_service, wishlist as wishlist_service
 from fastapi import status
 from uuid import UUID
 import pytest
 import fakeredis
-from app.models.rating import BookRatingViewModel, UserInRatingViewModel
-from app.schemas.wishlist import WishList
-from app.models.wishlist import WishlistViewModel
+from models.rating import BookRatingViewModel, UserInRatingViewModel
+from schemas.wishlist import WishList
+from models.wishlist import WishlistViewModel
 
 
 

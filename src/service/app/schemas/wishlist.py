@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, UUID
-from app.database import Base
+from database import Base
 from .base_entity import BaseEntity
     
 class WishList(Base, BaseEntity):

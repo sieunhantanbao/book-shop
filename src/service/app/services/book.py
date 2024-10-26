@@ -2,13 +2,13 @@ from uuid import UUID
 from sqlalchemy import asc, desc, or_
 from typing import List
 from sqlalchemy.orm import Session
-from app.models.category import CategoryForDdlViewModel, CategoryView2Model, CategoryViewModel
-from app.models.book import BookDetailViewModel, BookFeaturedViewModel, BookFilterInputModel, BookRelatedViewModel
-from app.schemas.book_relation import BookRelation
-from app.ultils.extensions import is_valid_uuid
-from app.schemas.book import Book
-from app.schemas.category import Category
-from app.schemas.wishlist import WishList
+from models.category import CategoryForDdlViewModel, CategoryView2Model, CategoryViewModel
+from models.book import BookDetailViewModel, BookFeaturedViewModel, BookFilterInputModel, BookRelatedViewModel
+from schemas.book_relation import BookRelation
+from ultils.extensions import is_valid_uuid
+from schemas.book import Book
+from schemas.category import Category
+from schemas.wishlist import WishList
 
 
 def get_by_id(db: Session, id_or_slug) -> BookDetailViewModel:

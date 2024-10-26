@@ -4,12 +4,12 @@ from uuid import UUID
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 from slugify import slugify
-from app.ultils.extensions import allowed_file, upload_file
-from app.models.admin.book import BaseAdminBookViewModel, AdminBookCreateOrUpdateRequestModel
-from app.models.admin.category import BaseAdminCategoryViewModel, AdminCategoryCreateOrUpdateRequestModel
-from app.schemas.category import Category
-from app.schemas.book import Book
-from app.schemas.image import Image
+from ultils.extensions import allowed_file, upload_file
+from models.admin.book import BaseAdminBookViewModel, AdminBookCreateOrUpdateRequestModel
+from models.admin.category import BaseAdminCategoryViewModel, AdminCategoryCreateOrUpdateRequestModel
+from schemas.category import Category
+from schemas.book import Book
+from schemas.image import Image
 
 
 def get_all(db: Session) -> List[BaseAdminBookViewModel]:

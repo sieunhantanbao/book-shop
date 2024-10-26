@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, Time, UUID
-from app.database import Base
+from database import Base
 from .base_entity import BaseEntity
 from sqlalchemy.orm import relationship
 from .category import Category    

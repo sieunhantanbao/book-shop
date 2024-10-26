@@ -5,6 +5,11 @@
 - [Taskfile](https://taskfile.dev/installation/)
 - [Helm](https://helm.sh/docs/intro/install/)
 
+## Start Minikube
+```bash
+   minikube start --driver=docker 
+```
+
 ## Deploy database (Postgresql, Redis)
 ```bash
    task deploy_db
