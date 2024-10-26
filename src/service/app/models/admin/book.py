@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel, field_validator
-from app.models.image import ImageViewModel
+from models.image import ImageViewModel
 
 class BaseAdminBookViewModel(BaseModel):
     id: UUID

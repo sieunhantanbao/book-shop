@@ -4,9 +4,9 @@ from uuid import UUID
 from datetime import datetime
 from fastapi import UploadFile, status
 import logging
-from app.ultils.extensions import allowed_file, upload_file
-from app.schemas.user import User, get_hashed_password, verify_password
-from app.models.user import AdminUserViewModel, ChangeUserPasswordModel, UpdateMyProfileModel, UserCreateOrUpdateModel, UserProfileViewModel
+from ultils.extensions import allowed_file, upload_file
+from schemas.user import User, get_hashed_password, verify_password
+from models.user import AdminUserViewModel, ChangeUserPasswordModel, UpdateMyProfileModel, UserCreateOrUpdateModel, UserProfileViewModel
 
 
 def get_all(db: Session) -> List[AdminUserViewModel]:

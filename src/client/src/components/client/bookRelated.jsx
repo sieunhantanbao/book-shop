@@ -2,7 +2,7 @@ import React from 'react';
 import BookItem from './sub-components/BookItem';
 import { getApiUrl } from '../../utils/ultil';
 function BookRelated({title, books, onWishlistPage=false}) {
-    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/static/files_uploaded`;
 
     if (!books) return <img src="/client/img/loading_icon.gif" height="64" width="64" alt="Loading"/>;
 

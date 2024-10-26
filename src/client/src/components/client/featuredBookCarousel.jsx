@@ -35,7 +35,7 @@ const CarouselItems = ({ items, imageBaseUrl }) => (
 );
 
 function FeaturedBookCarousel() {
-    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/static/files_uploaded`;
     const dispatch = useDispatch();
     const { featuredBooks, loadingFeaturedBook, errorFeaturedBook } = useSelector(state => state.books);
     useEffect(() => {

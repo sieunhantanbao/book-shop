@@ -1,7 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel
-from app.models.image import ImageViewModel
+from models.image import ImageViewModel
 
 class BaseAdminCategoryViewModel(BaseModel):
     id: UUID

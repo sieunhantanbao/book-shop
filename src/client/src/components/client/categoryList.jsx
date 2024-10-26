@@ -29,7 +29,7 @@ const Footer = () => (
 );
 
 function CategoryList({load_all=false}) {
-    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/static/files_uploaded`;
     const dispatch = useDispatch();
     const { items, loading, error } = useSelector(state => state.categories);
 

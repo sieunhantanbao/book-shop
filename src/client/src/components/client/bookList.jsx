@@ -12,7 +12,7 @@ function BookList({title}) {
     const dispatch = useDispatch();
     const { books, loadingSerachBook, errorSearchBook } = useSelector(state => state.books);
 
-    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/static/files_uploaded`;
 
     useEffect(() => {
 
