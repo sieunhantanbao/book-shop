@@ -21,10 +21,13 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+
 # Allow access static folder
-app.mount(f"/{os.environ.get('UPLOAD_FOLDER')}",
-          StaticFiles(directory=f"{os.environ.get('UPLOAD_FOLDER')}"),
-          name="static")
+try:
+    app.mount(f"/{os.environ.get('UPLOAD_FOLDER')}", StaticFiles(directory=f"{os.environ.get('UPLOAD_FOLDER')}"), name="static")
+except Exception:
+    # For pytest
+    app.mount(f"/app/{os.environ.get('UPLOAD_FOLDER')}", StaticFiles(directory=f"app/{os.environ.get('UPLOAD_FOLDER')}"), name="static")
 
 # Add routers
 app.include_router(auth.router)

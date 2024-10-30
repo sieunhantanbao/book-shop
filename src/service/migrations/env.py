@@ -22,7 +22,7 @@ config.set_main_option('sqlalchemy.url', SQLALCHEMY_DATABASE_URL)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
+# from app import mymodel
 # target_metadata = mymodel.Base.metadata
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 if not database_exists(engine.url):
