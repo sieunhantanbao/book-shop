@@ -20,7 +20,6 @@ from schemas.wishlist import WishList
 from models.wishlist import WishlistViewModel
 
 
-
 ################## COMMON SETUP ###############################
 # Create a mock for the token_interceptor dependency
 def override_token_interceptor():
