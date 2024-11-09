@@ -2,11 +2,11 @@ from fastapi.testclient import TestClient
 from unittest.mock import MagicMock
 from datetime import datetime
 from main import app
-from schemas.user import User
-from services.auth import token_interceptor
-from database import get_db_context
-from models.user import UserProfileViewModel
-from services import user as user_service
+from app.schemas.user import User
+from app.services.auth import token_interceptor
+from app.database import get_db_context
+from app.models.user import UserProfileViewModel
+from app.services import user as user_service
 from fastapi import status
 from io import BytesIO
 from uuid import UUID

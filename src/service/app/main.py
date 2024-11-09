@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 import os
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from routers import auth, user, book
-from routers.admin import book as admin_book, category as admin_category, rating as admin_rating, user as admin_user
+from app.routers import auth, user, book
+from app.routers.admin import book as admin_book, category as admin_category, rating as admin_rating, user as admin_user
 
 load_dotenv()
 

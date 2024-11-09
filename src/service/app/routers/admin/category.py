@@ -3,14 +3,14 @@ from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, UploadFile, status, Form
 from sqlalchemy.orm import Session
-from ultils.extensions import clear_redis_cache, remove_file
-from ultils.constants import REDIS_KEY_CLIENT_LIST_ALL_CATEGORIES, REDIS_KEY_CLIENT_LIST_SHORT_CATEGORIES
-from models.admin.category import AdminCategoryCreateOrUpdateRequestModel, BaseAdminCategoryViewModel
-from ultils.utils import http_exception
-from services.auth import admin_token_interceptor
-from database import get_db_context
-from schemas.user import User
-from services.admin import book as _book_service, image as _image_service
+from app.ultils.extensions import clear_redis_cache, remove_file
+from app.ultils.constants import REDIS_KEY_CLIENT_LIST_ALL_CATEGORIES, REDIS_KEY_CLIENT_LIST_SHORT_CATEGORIES
+from app.models.admin.category import AdminCategoryCreateOrUpdateRequestModel, BaseAdminCategoryViewModel
+from app.ultils.utils import http_exception
+from app.services.auth import admin_token_interceptor
+from app.database import get_db_context
+from app.schemas.user import User
+from app.services.admin import book as _book_service, image as _image_service
 
 router = APIRouter(prefix="/api/admin/categories", tags=["Administrator Category"])
 

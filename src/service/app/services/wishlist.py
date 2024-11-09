@@ -1,7 +1,7 @@
 from uuid import UUID
 from sqlalchemy.orm import Session
-from models.wishlist import WishlistViewModel
-from schemas.wishlist import WishList
+from app.models.wishlist import WishlistViewModel
+from app.schemas.wishlist import WishList
 
 
 def get_all(db: Session, user_id: UUID) -> list[WishlistViewModel]:

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 function MyProfilePage() {
   const dispatch = useDispatch();
-  const imageBaseUrl = `${getApiUrl()}/static/files_uploaded`;
+  const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
   const [message, setMessage] = useState({ color: "green", text: "" });
   const [userProfile, setUserProfile] = useState({}); // Ensure userProfile is initialized as an empty object
   const navigationTo = useNavigate();

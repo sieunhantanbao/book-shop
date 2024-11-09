@@ -46,7 +46,7 @@ services:
       - migration
       - myredis
     ports:
-      - "8001:8000"
+      - "8000:8000"
     volumes:
       - $HOME/projects/shared/book-shop/files_uploaded/:/app/app/static/files_uploaded/
       - $HOME/projects/shared/book-shop/config/backend/.env/:/app/.env
@@ -59,7 +59,7 @@ services:
       context: src/client
       dockerfile: Dockerfile
       args:
-      - API_URL=http://localhost:8001
+      - API_URL=http://localhost:8000
     image: sieunhantanbao/book-shop-frontend:latest
     container_name: book-shop-frontend
     restart: unless-stopped

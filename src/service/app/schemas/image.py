@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, String, UUID
-from database import Base
+from app.database import Base
 from .base_entity import BaseEntity
 from sqlalchemy.orm import relationship
     

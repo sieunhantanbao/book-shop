@@ -4,7 +4,7 @@ import BookRating from "./sub-components/BookRating";
 import SafeHtlm from "../common/SafeHtlm";
 import { getApiUrl } from "../../utils/ultil";
 function BookDetailInfo({book}) {
-    const imageBaseUrl = `${getApiUrl()}/static/files_uploaded`;
+    const imageBaseUrl = `${getApiUrl()}/app/static/files_uploaded`;
 
     return (
         <>
