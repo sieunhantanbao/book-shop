@@ -3,14 +3,14 @@ from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, UploadFile, status, Form
 from sqlalchemy.orm import Session
-from ultils.extensions import clear_redis_cache
-from ultils.constants import REDIS_KEY_CLIENT_LIST_ALL_BOOKS, REDIS_KEY_CLIENT_LIST_FEATURED_BOOKS
-from models.admin.book import AdminBookCreateOrUpdateRequestModel, BaseAdminBookViewModel
-from ultils.utils import http_exception
-from services.auth import admin_token_interceptor
-from database import get_db_context
-from schemas.user import User
-from services.admin import book as _book_service
+from app.ultils.extensions import clear_redis_cache
+from app.ultils.constants import REDIS_KEY_CLIENT_LIST_ALL_BOOKS, REDIS_KEY_CLIENT_LIST_FEATURED_BOOKS
+from app.models.admin.book import AdminBookCreateOrUpdateRequestModel, BaseAdminBookViewModel
+from app.ultils.utils import http_exception
+from app.services.auth import admin_token_interceptor
+from app.database import get_db_context
+from app.schemas.user import User
+from app.services.admin import book as _book_service
 
 router = APIRouter(prefix="/api/admin/books", tags=["Administrator Book"])
 

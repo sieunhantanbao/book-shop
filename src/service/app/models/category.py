@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel
-from models.book import BookDetailViewModel
-from models.image import ImageViewModel
+from app.models.book import BookDetailViewModel
+from app.models.image import ImageViewModel
 
 class CategoryViewModel:
     def __init__(self, id: UUID,name: str,slug: str,short_description: str,thumbnail_url: str,sort_order: int,images: List[ImageViewModel])-> None:

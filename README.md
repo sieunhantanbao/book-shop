@@ -32,7 +32,7 @@ A practical pet project that uses FastAPI as backend and React as frontend
 #### This method requires the [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/downloads/), and [Python](https://www.python.org/) to be installed already.
 
 ⚙️ Update the environments settings
-- Rename the sample.env file in /service/ to .env and update the settings
+- Rename the sample.env file to .env and update the settings
 ```bash
    APP_SECRET_KEY='myrandomuntellsecret' # You can change to any other value if needed
    REDIS_HOST='localhost' # Update with your installed redis host
@@ -50,10 +50,6 @@ A practical pet project that uses FastAPI as backend and React as frontend
    JWT_SECRET=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2i/bL8RBDeq6tKOdgaP0mNYpiUZIHT2QZjc8wZgvZEqQx4avnkujE92emGS1p6b6/y229oNj+vkSKXCMHJ3FUG3ytFfDNSDMMqp1gLq2n0oRJT8KKHfBApf/v/BK5aYGD9sKZ/FSEapXN79nwBywabQPpa5jpcFjLQD3cg8ezLWPfnyVS76i3mHpVWwPUABHqT4DFaz0PDXtZa2TAIYf7tMa3NNcWHA9OgRtfIbTqkimUdy6aW3w0GGav1KPdfxNMQ0m7+cOE9uc8yYR0DavyFe8b3Tz1xUKV2oKNfnyRkOWasHYTI9PZUwnnHWCa74X5LI6xJZ9myVecq/YDXw9qQIDAQAB # You can change to any other value if needed
    JWT_ALGORITHM=HS256
    ALLOWED_ORIGINS='http://localhost:5173' # The front-end (React) URL
-```
-- Rename the sample.env file in /client/ to .env and update the settings
-```bash
-   VITE_API_URL=http://127.0.0.1:8000 # The API (FastAPI) URL
 ```
 ⚙️ Run the application
 - Create virtual environment
