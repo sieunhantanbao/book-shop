@@ -48,8 +48,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - $HOME/projects/shared/book-shop/files_uploaded/:/app/app/static/files_uploaded/
-      - $HOME/projects/shared/book-shop/config/backend/.env/:/app/.env
+      - ./src/service/app/static/files_uploaded/:/app/app/static/files_uploaded/
+      - .env/:/app/.env
     networks:
       - app-network
     command: uvicorn app.main:app --host 0.0.0.0
