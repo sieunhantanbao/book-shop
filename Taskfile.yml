@@ -70,7 +70,7 @@ tasks:
   
   test-backend:
     desc: Run the tests for backend
-    dir: src/service
+    dir: src/service/app/tests
     cmds:
       - pytest
 
